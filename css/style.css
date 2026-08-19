@@ -301,6 +301,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 .error-icon-large svg { width: 36px; height: 36px; }
 
 /* --- RESPONSIVE QUERIES --- */
+/* Enhanced Mobile Compaction */
 @media (max-width: 1024px) {
     .summary-grid { grid-template-columns: repeat(2, 1fr); }
     .detail-grid { grid-template-columns: 1fr; } 
@@ -310,28 +311,44 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 
 @media (max-width: 768px) {
-    .header { padding: 0 12px; }
+    /* Header adjustments to prevent horizontal overflow */
+    .header { padding: 0 16px; }
     .header-left, .header-right { gap: 8px; }
     .hide-on-mobile { display: none !important; }
     .mobile-menu-btn { display: block; }
     
+    /* Sidebar toggling */
     .sidebar { position: absolute; left: -100%; top: 0; bottom: 0; z-index: 20; }
     .app-container.mobile-menu-open .sidebar { left: 0; transform: translateX(0); }
     .collapse-btn { display: none; }
     
-    .section-top { padding: 16px; }
-    .section-bottom { padding: 16px 16px 24px 16px; }
-    .card { padding: 16px; }
+    /* Drastically reduced vertical padding to minimize scrolling on the dashboard */
+    .section-top { padding: 16px 16px 8px 16px; }
+    .section-bottom { padding: 8px 16px 24px 16px; }
     
-    .page-title { font-size: 20px; }
+    /* Scaled down typography for mobile */
+    .page-title { font-size: 18px; margin-bottom: 4px; }
     .section-title { font-size: 16px; margin-bottom: 12px; }
-    .balance-amount { font-size: 20px; }
+    .wallet-details { font-size: 12px; font-weight: 500; color: var(--clr-text-main); align-items: flex-start; margin-top: 0; line-height: 1.4; }
+    .section-top-header { flex-direction: column; align-items: flex-start; gap: 4px; margin-bottom: 16px; }
     
+    /* Compact Dashboard Cards */
+    .balance-card { padding: 16px; gap: 12px; flex-direction: column; align-items: stretch; }
+    .balance-label { font-size: 13px; margin-bottom: 4px; }
+    .balance-amount { font-size: 22px; }
+    .balance-actions { width: 100%; margin-top: 4px; }
+    .btn-primary.full-width-mobile { min-height: 42px; font-size: 14px; }
+    
+    .summary-grid { gap: 12px; }
+    .summary-title { font-size: 14px; margin-bottom: 8px; }
+    .small-card { padding: 12px 16px; border-radius: 10px; }
+    .small-card-label { font-size: 12px; margin-bottom: 4px; }
+    .small-card-amount { font-size: 18px; }
+    
+    /* Margin overrides to compress vertical height on forms */
     .mb-24 { margin-bottom: 16px; }
     .mt-32 { margin-top: 20px; }
     .mt-40 { margin-top: 24px; }
-    
-    .summary-grid { grid-template-columns: 1fr; gap: 16px; }
     
     /* Wizard specific tweaks for mobile */
     .wizard-progress { padding: 0 16px; }
@@ -343,13 +360,8 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     .milestone-row { flex-direction: column; align-items: stretch; }
     
     /* Navigation Step Buttons Stacked Hierarchy */
-    .wizard-actions {
-        flex-direction: column-reverse;
-        gap: 12px;
-    }
-    .wizard-actions button {
-        margin: 0 !important; /* Strips bottom margins so gap purely controls spacing */
-    }
+    .wizard-actions { flex-direction: column-reverse; gap: 12px; }
+    .wizard-actions button { margin: 0 !important; }
 
     .timeline-item { padding-bottom: 16px; }
     .tl-content { flex-direction: column; align-items: stretch; gap: 12px; }
@@ -357,9 +369,6 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     .tl-actions { justify-content: flex-start; }
     
     .full-width-mobile { width: 100%; }
-    
-    .wallet-details { align-items: flex-start; margin-top: 8px; }
-    .section-top-header { flex-direction: column; align-items: flex-start; gap: 8px; }
 
     .modal-header, .modal-body, .modal-footer { padding: 16px; }
 }
@@ -371,8 +380,6 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     .wizard-actions { flex-direction: column-reverse; gap: 12px; }
 
     .projects-grid { grid-template-columns: 1fr; }
-    .balance-card { flex-direction: column; align-items: flex-start; gap: 16px; }
-    .balance-actions { width: 100%; }
     
     .receipt-row { flex-direction: column; text-align: left; gap: 4px; }
     .receipt-row strong { text-align: left; }

@@ -262,7 +262,7 @@ const app = {
     },
 
     handleCreateProject(e) {
-        e.preventDefault();
+        if(e) e.preventDefault();
         if (!this.validateCurrentStep()) return;
 
         const btn = document.getElementById('btn-save-project');

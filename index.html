@@ -150,7 +150,8 @@
                             </div>
 
                             <div style="padding: 32px;" class="wizard-padding-mobile">
-                                <form id="create-project-form" onsubmit="app.handleCreateProject(event)">
+                                <!-- Prevent implicit native submit via onsubmit -->
+                                <form id="create-project-form" onsubmit="event.preventDefault();">
                                     
                                     <!-- STEP 1: CUSTOMER DETAILS -->
                                     <div class="wizard-step active" id="wizard-step-1">
@@ -275,7 +276,8 @@
 
                                         <div class="form-actions wizard-actions mt-40">
                                             <button type="button" class="btn-secondary full-width-mobile" onclick="app.prevWizardStep(5)">&larr; Back</button>
-                                            <button type="submit" class="btn-primary full-width-mobile bg-success" id="btn-save-project">Create Project</button>
+                                            <!-- Switched to type="button" to avoid mobile Safari HTML5 hidden field validation bugs -->
+                                            <button type="button" class="btn-primary full-width-mobile bg-success" id="btn-save-project" onclick="app.handleCreateProject(event)">Create Project</button>
                                         </div>
                                     </div>
 
