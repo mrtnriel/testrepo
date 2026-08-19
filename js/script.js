@@ -9,6 +9,7 @@ const app = {
     transactions: [],
     currentProjectViewId: null,
     currentCheckoutMilestoneIdx: null,
+    pendingTxnId: null, // Temporary store for the success-to-invoice routing
     
     // Wizard State
     currentWizardStep: 1,
@@ -262,46 +263,46 @@ const app = {
 
     handleCreateProject(e) {
         e.preventDefault();
-        
-        // Final sanity check
         if (!this.validateCurrentStep()) return;
 
         const btn = document.getElementById('btn-save-project');
+        if (btn.disabled) return; 
         
-        // Prevent duplicate submissions if already animating
-        if (btn.classList.contains('is-loading') || btn.classList.contains('is-success')) return;
-
-        // Start loading animation
-        btn.classList.add('is-loading');
         btn.disabled = true;
 
-        // Simulate Network Request / Processing time (1.5 seconds)
+        // Open Modal to Loading State
+        document.getElementById('createStateLoading').classList.remove('hidden');
+        document.getElementById('createStateSuccess').classList.add('hidden');
+        document.getElementById('createStateError').classList.add('hidden');
+        document.getElementById('creationFeedbackModal').classList.remove('hidden');
+
+        // Simulate Network Request / Processing time
         setTimeout(() => {
-            const isSuccess = true; // Hardcoded to simulate a successful API response
+            const isSuccess = true; // Set to false to test the error state
 
             if (isSuccess) {
-                // Transition to success state (green checkmark)
-                btn.classList.remove('is-loading');
-                btn.classList.add('is-success');
+                // Transition to success state
+                document.getElementById('createStateLoading').classList.add('hidden');
+                document.getElementById('createStateSuccess').classList.remove('hidden');
 
-                // Leave success state visible briefly, then execute the finalization logic
+                // Wait for animation, then finalize
                 setTimeout(() => {
                     this.finalizeProjectCreation();
-                    
-                    // Reset button silently after view has changed so it's ready for the next time
-                    setTimeout(() => {
-                        btn.classList.remove('is-success');
-                        btn.disabled = false;
-                    }, 300);
-                }, 1000); 
+                    document.getElementById('creationFeedbackModal').classList.add('hidden');
+                    btn.disabled = false;
+                }, 1800); 
 
             } else {
-                // Example of failure handling
-                btn.classList.remove('is-loading');
-                btn.disabled = false;
-                alert('Project creation failed. Please try again.');
+                // Transition to error state
+                document.getElementById('createStateLoading').classList.add('hidden');
+                document.getElementById('createStateError').classList.remove('hidden');
             }
         }, 1500); 
+    },
+
+    closeCreationModal() {
+        document.getElementById('creationFeedbackModal').classList.add('hidden');
+        document.getElementById('btn-save-project').disabled = false;
     },
 
     finalizeProjectCreation() {
@@ -492,7 +493,33 @@ const app = {
             return;
         }
 
-        this.simulateCustomerPay(this.currentProjectViewId, this.currentCheckoutMilestoneIdx);
+        const btn = document.getElementById('btn-authorize-pay');
+        if (btn.disabled) return;
+        btn.disabled = true;
+
+        // Open Modal to Loading State
+        document.getElementById('paymentStateLoading').classList.remove('hidden');
+        document.getElementById('paymentStateSuccess').classList.add('hidden');
+        document.getElementById('paymentStateError').classList.add('hidden');
+        document.getElementById('paymentFeedbackModal').classList.remove('hidden');
+
+        // Simulate Network Request
+        setTimeout(() => {
+            const isSuccess = true; // Set to false to test the error state
+            if (isSuccess) {
+                document.getElementById('paymentStateLoading').classList.add('hidden');
+                document.getElementById('paymentStateSuccess').classList.remove('hidden');
+                
+                // Process the data behind the scenes
+                this.simulateCustomerPay(this.currentProjectViewId, this.currentCheckoutMilestoneIdx);
+                
+                btn.disabled = false;
+            } else {
+                document.getElementById('paymentStateLoading').classList.add('hidden');
+                document.getElementById('paymentStateError').classList.remove('hidden');
+                btn.disabled = false;
+            }
+        }, 1500);
     },
 
     sendPaymentRequest(projId, milestoneIdx) {
@@ -528,24 +555,41 @@ const app = {
         const allPaid = p.milestones.every(x => x.paid);
         const anyPaid = p.milestones.some(x => x.paid);
 
+        // Update status silently
         if (allPaid) {
             p.status = 'COMPLETED';
-            alert(`Payment Authorized! Project Fully Paid! Status updated to COMPLETED.`);
         } else if (p.status === 'PAYMENT_REQUESTED' || p.status === 'DRAFT') {
             p.status = 'IN_PROGRESS';
-            alert(`Payment Authorized! Initial payment received! Project automatically moved to IN PROGRESS.`);
         } else if (p.status === 'IN_PROGRESS' && anyPaid) {
              p.status = 'PARTIALLY_PAID';
-             alert(`Payment Authorized!`);
-        } else if (p.status === 'FINAL_PAYMENT_REQUESTED') {
-            alert(`Payment Authorized!`);
         }
 
+        // Store the transaction ID so we can route to the invoice later
+        this.pendingTxnId = newTxnId;
+        
+        // Inject the exact amount into the success modal UI
+        document.getElementById('successModalAmount').innerText = `₱${this.formatMoney(m.amount)}`;
+    },
+
+    closePaymentSuccessModal() {
+        // Hide popup
+        document.getElementById('paymentFeedbackModal').classList.add('hidden');
+        
+        // Navigate to Transactions tab
         document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
         document.querySelector('[data-target="view-transactions"]').classList.add('active');
         
         this.switchView('view-transactions');
-        this.openInvoiceModal(newTxnId);
+        
+        // Open the corresponding invoice
+        if (this.pendingTxnId) {
+            this.openInvoiceModal(this.pendingTxnId);
+            this.pendingTxnId = null; // Clear
+        }
+    },
+
+    closePaymentModalError() {
+        document.getElementById('paymentFeedbackModal').classList.add('hidden');
     },
 
     markOrderReady() {

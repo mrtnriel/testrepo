@@ -52,15 +52,19 @@ img { max-width: 100%; height: auto; display: block; }
 
 /* Utility Classes */
 .text-truncate { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.text-center { text-align: center; }
 .text-muted { color: var(--clr-text-muted); }
+.text-danger { color: var(--clr-summary-orange) !important; }
 .text-sm { font-size: 13px; }
 .m-0 { margin: 0; }
+.mb-8 { margin-bottom: 8px; }
 .mb-16 { margin-bottom: 16px !important; }
 .mb-20 { margin-bottom: 20px; }
 .mb-24 { margin-bottom: 24px; }
 .mt-0 { margin-top: 0 !important; }
 .mt-8 { margin-top: 8px; }
 .mt-16 { margin-top: 16px; }
+.mt-24 { margin-top: 24px; }
 .mt-32 { margin-top: 32px; }
 .mt-40 { margin-top: 40px; }
 .d-flex { display: flex; }
@@ -142,53 +146,6 @@ img { max-width: 100%; height: auto; display: block; }
 .btn-outline { background-color: transparent; color: var(--clr-primary-btn); border: 1px solid var(--clr-primary-btn); padding: 8px 16px; border-radius: var(--border-radius-btn); font-size: 12px; font-weight: 600; transition: 0.2s; display: inline-flex; justify-content: center; align-items: center; min-height: 36px; }
 .btn-outline:hover { background-color: var(--clr-primary-btn); color: white; }
 .full-width { width: 100%; }
-
-/* --- Loading / Success Button Animation --- */
-.btn-submit-animated {
-    position: relative;
-    overflow: hidden;
-}
-.btn-submit-animated .btn-text {
-    transition: opacity 0.2s, transform 0.2s;
-    display: inline-block;
-}
-.btn-submit-animated .icon-container {
-    position: absolute;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    inset: 0;
-    pointer-events: none;
-}
-.btn-submit-animated .spinner-icon {
-    width: 22px; height: 22px;
-    border: 3px solid rgba(255,255,255,0.3);
-    border-top-color: #fff;
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-    opacity: 0;
-    transform: scale(0.5);
-    transition: opacity 0.2s, transform 0.2s;
-    position: absolute;
-}
-.btn-submit-animated .check-icon {
-    width: 26px; height: 26px;
-    background-color: #fff;
-    color: var(--clr-summary-green);
-    border-radius: 50%;
-    padding: 4px;
-    opacity: 0;
-    transform: scale(0.5);
-    transition: opacity 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    position: absolute;
-}
-.btn-submit-animated.is-loading .btn-text { opacity: 0; transform: scale(0.9); }
-.btn-submit-animated.is-loading .spinner-icon { opacity: 1; transform: scale(1); }
-.btn-submit-animated.is-success .btn-text { opacity: 0; }
-.btn-submit-animated.is-success .spinner-icon { opacity: 0; transform: scale(1.5); }
-.btn-submit-animated.is-success .check-icon { opacity: 1; transform: scale(1); }
-
-@keyframes spin { to { transform: rotate(360deg); } }
 
 /* --- Forms & Wizard --- */
 .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
@@ -299,9 +256,18 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 .qr-placeholder img { max-width: 180px; height: auto; margin: 0 auto; }
 .qr-instructions { text-align: center; font-size: 14px; font-weight: 600; color: var(--clr-text-muted); margin-bottom: 24px; }
 
-/* --- Invoice Modal Elements --- */
+/* --- Modals & Overlays --- */
 .modal-overlay { position: fixed; inset: 0; background-color: rgba(15, 39, 76, 0.6); z-index: 100; display: flex; align-items: center; justify-content: center; padding: 16px; opacity: 1; transition: opacity 0.3s ease; }
 .modal-overlay.hidden { display: none !important; opacity: 0; }
+
+@keyframes popInModal {
+    0% { opacity: 0; transform: scale(0.85); }
+    100% { opacity: 1; transform: scale(1); }
+}
+.modal-overlay:not(.hidden) .modal-content { 
+    animation: popInModal 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; 
+}
+
 .modal-content { background-color: var(--clr-bg-card); border-radius: var(--border-radius-card); width: 100%; max-width: 450px; max-height: 90vh; display: flex; flex-direction: column; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); overflow: hidden; }
 .modal-header { padding: 20px 24px; border-bottom: 1px solid var(--clr-border); display: flex; justify-content: space-between; align-items: center; background-color: #fff; }
 .btn-close { font-size: 28px; color: var(--clr-text-muted); transition: color 0.2s; line-height: 1; padding: 0 8px; margin: -8px; background: transparent; border: none; cursor: pointer; }
@@ -317,6 +283,22 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 .invoice-row strong { text-align: right; color: var(--clr-text-main); word-break: break-word; }
 .invoice-divider { height: 1px; border-top: 1px dashed var(--clr-border); margin: 16px 0; }
 .invoice-total { font-size: 20px; font-weight: 700; color: var(--clr-primary-btn); }
+
+/* Success & Error Modal specifics */
+.success-modal-content { padding: 40px 24px; border-radius: 20px; background: linear-gradient(180deg, #e6f0fa 0%, #f8fafc 100%); border: none; }
+.success-icon-large { width: 72px; height: 72px; background-color: #2F9E5B; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; margin: 0 auto; box-shadow: 0 8px 16px rgba(47, 158, 91, 0.2); }
+.success-icon-large svg { width: 36px; height: 36px; }
+.success-heading { font-size: 18px; font-weight: 600; color: #0A2A57; }
+.success-amount { font-size: 36px; font-weight: 800; color: #0A2A57; }
+
+/* Loading State Specifics */
+.state-container { display: block; animation: fadeIn 0.4s ease forwards; }
+.state-container.hidden { display: none; animation: none; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.large-spinner { width: 60px; height: 60px; border: 4px solid var(--clr-border); border-top-color: var(--clr-primary-btn); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto; }
+
+.error-icon-large { width: 72px; height: 72px; background-color: #fef2f2; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--clr-summary-orange); margin: 0 auto; border: 2px solid #fecaca; }
+.error-icon-large svg { width: 36px; height: 36px; }
 
 /* --- RESPONSIVE QUERIES --- */
 @media (max-width: 1024px) {
@@ -398,4 +380,6 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     .invoice-row { flex-direction: column; text-align: left; gap: 4px; }
     .invoice-row strong { text-align: left; }
     .invoice-row.align-center { flex-direction: row; align-items: center; justify-content: space-between; }
+    
+    .success-amount { font-size: 32px; }
 }
