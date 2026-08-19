@@ -200,6 +200,7 @@ const app = {
         }
     },
 
+    // Auto-calculate equal milestones
     generateMilestones() {
         const total = parseFloat(document.getElementById('projTotal').value) || 0;
         let count = parseInt(document.getElementById('projMilestoneCount').value) || 1;
@@ -233,16 +234,16 @@ const app = {
             const row = document.createElement('div');
             row.className = 'milestone-row';
             row.innerHTML = `
-                <div style="flex: 1; min-width: 120px;">
-                    <label style="font-size:11px; color:var(--clr-text-muted);">Name</label>
+                <div class="milestone-field name-field">
+                    <label>Name</label>
                     <input type="text" class="form-control m-name" placeholder="Milestone Name" value="${defaultName}" required>
                 </div>
-                <div style="flex: 1; min-width: 120px;">
-                    <label style="font-size:11px; color:var(--clr-text-muted);">Amount (₱)</label>
+                <div class="milestone-field amt-field">
+                    <label>Amount (₱)</label>
                     <input type="number" class="form-control m-amt" placeholder="Amount" value="${splitAmount.toFixed(2)}" step="0.01" min="1" required ${isReadonly} oninput="app.validateMilestonesSum()">
                 </div>
-                <div style="flex: 1; min-width: 130px;">
-                    <label style="font-size:11px; color:var(--clr-text-muted);">Due Date</label>
+                <div class="milestone-field date-field">
+                    <label>Due Date</label>
                     <input type="date" class="form-control m-date" value="${defaultDate}" min="${today}" ${expDate ? `max="${expDate}"` : ''} required>
                 </div>
             `;

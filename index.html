@@ -20,16 +20,16 @@
                 </button>
                 <div class="brand-logo">
                     <span class="logo-circle">G</span>
-                    <span class="logo-text"></span>
-                    <span class="logo-badge">BETA</span>
+                    <span class="logo-text">)</span>
+                    <span class="logo-badge">MILESTONE</span>
                 </div>
             </div>
             <div class="header-right">
                 <div class="user-profile">
-                    <div class="user-avatar">JS</div>
+                    <div class="user-avatar">RM</div>
                     <div class="user-info hide-on-mobile">
-                        <div class="user-name text-truncate">John Smith</div>
-                        <div class="user-email text-truncate">johnsmith69@gmail.com</div>
+                        <div class="user-name text-truncate">Rhea Mae Narag</div>
+                        <div class="user-email text-truncate">rheamaespnarag@gmail.com</div>
                     </div>
                     <svg class="dropdown-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
                 </div>
@@ -71,6 +71,7 @@
                             <h1 class="page-title">Business Overview</h1>
                             <div class="wallet-details">
                                 <span class="wallet-number">GCash Business Account</span>
+                                <span class="wallet-time">Live Update</span>
                             </div>
                         </div>
 
@@ -171,7 +172,7 @@
                                                 <input type="email" id="custEmail" class="form-control">
                                             </div>
                                         </div>
-                                        <div class="form-actions mt-40">
+                                        <div class="form-actions mt-32">
                                             <button type="button" class="btn-primary full-width-mobile" onclick="app.nextWizardStep(1)">Next Step &rarr;</button>
                                         </div>
                                     </div>
@@ -194,7 +195,7 @@
                                                 <input type="date" id="projDate" class="form-control" required onchange="app.generateMilestones()">
                                             </div>
                                         </div>
-                                        <div class="form-actions wizard-actions mt-40">
+                                        <div class="form-actions wizard-actions mt-32">
                                             <button type="button" class="btn-secondary full-width-mobile" onclick="app.prevWizardStep(2)">&larr; Back</button>
                                             <button type="button" class="btn-primary full-width-mobile" onclick="app.nextWizardStep(2)">Next Step &rarr;</button>
                                         </div>
@@ -203,9 +204,9 @@
                                     <!-- STEP 3: PAYMENT MILESTONES -->
                                     <div class="wizard-step" id="wizard-step-3">
                                         <h3 class="section-title mt-0">Payment Milestones</h3>
-                                        <p class="text-muted text-sm mb-24">Set up a payment schedule. You can split payments equally or assign custom amounts, ensuring they total the project amount.</p>
+                                        <p class="text-muted text-sm mb-24">Set up a payment schedule. You can split payments equally or assign custom amounts.</p>
                                         
-                                        <div class="form-grid mb-24">
+                                        <div class="form-grid mb-16">
                                             <div class="form-group">
                                                 <label>Distribution Type</label>
                                                 <select id="projMilestoneType" class="form-control" onchange="app.generateMilestones()">
@@ -220,7 +221,7 @@
                                         </div>
 
                                         <div id="milestones-container" class="milestones-editor">
-                                            <!-- Dynamically generated rows -->
+                                            <!-- Dynamically generated rows based on equal split -->
                                         </div>
                                         
                                         <div class="milestone-summary">
@@ -228,7 +229,7 @@
                                             <div id="milestone-warning" class="color-orange warning-text" style="display:none;">Allocated amounts must strictly equal the Total Project Amount.</div>
                                         </div>
 
-                                        <div class="form-actions wizard-actions mt-40">
+                                        <div class="form-actions wizard-actions mt-32">
                                             <button type="button" class="btn-secondary full-width-mobile" onclick="app.prevWizardStep(3)">&larr; Back</button>
                                             <button type="button" class="btn-primary full-width-mobile" id="btn-next-step-3" onclick="app.nextWizardStep(3)">Next Step &rarr;</button>
                                         </div>
@@ -238,17 +239,17 @@
                                     <div class="wizard-step" id="wizard-step-4">
                                         <h3 class="section-title mt-0">Penalty Fee <span class="text-muted text-sm" style="font-weight: normal;">(Optional)</span></h3>
                                         <p class="text-muted text-sm mb-24">Define rules for late payments or delayed pickups. Leave blank if not applicable.</p>
-                                        <div class="form-grid">
+                                        <div class="form-grid penalty-grid">
                                             <div class="form-group">
                                                 <label>Penalty Type</label>
                                                 <select id="projPenaltyType" class="form-control">
                                                     <option value="fixed">Fixed Amount (₱)</option>
-                                                    <option value="percent">Percentage of Balance (%)</option>
+                                                    <option value="percent">Percentage (%)</option>
                                                 </select>
                                             </div>
                                             <div class="form-group">
                                                 <label>Penalty Value</label>
-                                                <input type="number" id="projPenaltyValue" class="form-control" min="0" step="0.01" placeholder="e.g. 500 or 5">
+                                                <input type="number" id="projPenaltyValue" class="form-control" min="0" step="0.01" placeholder="e.g. 500">
                                             </div>
                                             <div class="form-group form-span-full">
                                                 <label>When to Charge</label>
@@ -260,7 +261,7 @@
                                                 </select>
                                             </div>
                                         </div>
-                                        <div class="form-actions wizard-actions mt-40">
+                                        <div class="form-actions wizard-actions mt-32">
                                             <button type="button" class="btn-secondary full-width-mobile" onclick="app.prevWizardStep(4)">&larr; Back</button>
                                             <button type="button" class="btn-primary full-width-mobile" onclick="app.nextWizardStep(4)">Review Project &rarr;</button>
                                         </div>
@@ -272,26 +273,27 @@
                                         <p class="text-muted text-sm mb-24">Please verify all information before launching this project.</p>
                                         
                                         <div class="review-grid">
-                                            <div class="review-block card bg-success-light mb-16" style="padding: 16px;">
-                                                <h4 style="margin-bottom: 8px; font-size: 14px;">Customer Details</h4>
-                                                <p id="rev-cust" class="text-sm" style="line-height: 1.6;"></p>
+                                            <div class="review-block card bg-success-light mb-16">
+                                                <h4 style="margin-bottom: 4px; font-size: 14px;">Customer Details</h4>
+                                                <p id="rev-cust" class="text-sm" style="line-height: 1.5;"></p>
                                             </div>
-                                            <div class="review-block card bg-success-light mb-16" style="padding: 16px;">
-                                                <h4 style="margin-bottom: 8px; font-size: 14px;">Order Details</h4>
-                                                <p id="rev-order" class="text-sm" style="line-height: 1.6;"></p>
+                                            <div class="review-block card bg-success-light mb-16">
+                                                <h4 style="margin-bottom: 4px; font-size: 14px;">Order Details</h4>
+                                                <p id="rev-order" class="text-sm" style="line-height: 1.5;"></p>
                                             </div>
-                                            <div class="review-block card bg-success-light mb-16" style="padding: 16px;">
-                                                <h4 style="margin-bottom: 8px; font-size: 14px;">Milestones Summary</h4>
-                                                <p id="rev-milestones" class="text-sm" style="line-height: 1.6;"></p>
+                                            <div class="review-block card bg-success-light mb-16">
+                                                <h4 style="margin-bottom: 4px; font-size: 14px;">Milestones Summary</h4>
+                                                <p id="rev-milestones" class="text-sm" style="line-height: 1.5;"></p>
                                             </div>
-                                            <div class="review-block card bg-success-light mb-24" style="padding: 16px;">
-                                                <h4 style="margin-bottom: 8px; font-size: 14px;">Penalty Policy</h4>
-                                                <p id="rev-penalty" class="text-sm" style="line-height: 1.6;"></p>
+                                            <div class="review-block card bg-success-light mb-24">
+                                                <h4 style="margin-bottom: 4px; font-size: 14px;">Penalty Policy</h4>
+                                                <p id="rev-penalty" class="text-sm" style="line-height: 1.5;"></p>
                                             </div>
                                         </div>
 
-                                        <div class="form-actions wizard-actions mt-40">
+                                        <div class="form-actions wizard-actions mt-32">
                                             <button type="button" class="btn-secondary full-width-mobile" onclick="app.prevWizardStep(5)">&larr; Back</button>
+                                            <!-- Switched to type="button" to avoid mobile Safari HTML5 hidden field validation bugs -->
                                             <button type="button" class="btn-primary full-width-mobile bg-success" id="btn-save-project" onclick="app.handleCreateProject(event)">Create Project</button>
                                         </div>
                                     </div>
@@ -439,18 +441,18 @@
 
     <!-- Project Creation Feedback Modal (Loading, Success, Error) -->
     <div id="creationFeedbackModal" class="modal-overlay hidden">
-        <div class="modal-content text-center" style="padding: 40px 24px; max-width: 350px;">
+        <div class="modal-content text-center" style="padding: 32px 24px; max-width: 350px;">
             
             <!-- Loading State -->
             <div id="createStateLoading" class="state-container">
                 <div class="large-spinner"></div>
-                <h3 class="section-title mt-24 mb-8">Creating Project...</h3>
+                <h3 class="section-title mt-20 mb-8">Creating Project...</h3>
                 <p class="text-muted text-sm m-0">Please wait while we set everything up.</p>
             </div>
             
             <!-- Success State -->
             <div id="createStateSuccess" class="state-container hidden">
-                <div class="success-icon-large" style="margin-bottom: 24px;">
+                <div class="success-icon-large" style="margin-bottom: 20px;">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
                         <polyline points="20 6 9 17 4 12"></polyline>
                     </svg>
@@ -468,8 +470,8 @@
                         <line x1="9" y1="9" x2="15" y2="15"></line>
                     </svg>
                 </div>
-                <h3 class="section-title mt-24 mb-8 text-danger">Failed to Create Project</h3>
-                <p class="text-muted text-sm mb-24">A network error occurred. Please check your connection and try again.</p>
+                <h3 class="section-title mt-20 mb-8 text-danger">Failed to Create Project</h3>
+                <p class="text-muted text-sm mb-20">A network error occurred. Please check your connection and try again.</p>
                 <button class="btn-secondary full-width" onclick="app.closeCreationModal()">Close & Try Again</button>
             </div>
 
@@ -483,13 +485,13 @@
             <!-- Loading State -->
             <div id="paymentStateLoading" class="state-container">
                 <div class="large-spinner"></div>
-                <h3 class="section-title mt-24 mb-8">Processing Payment...</h3>
+                <h3 class="section-title mt-20 mb-8">Processing Payment...</h3>
                 <p class="text-muted text-sm m-0">Please wait while your payment is being processed.</p>
             </div>
             
             <!-- Success State -->
             <div id="paymentStateSuccess" class="state-container hidden">
-                <div class="success-icon-large" style="margin-bottom: 24px;">
+                <div class="success-icon-large" style="margin-bottom: 20px;">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
                         <polyline points="20 6 9 17 4 12"></polyline>
                     </svg>
@@ -508,8 +510,8 @@
                         <line x1="9" y1="9" x2="15" y2="15"></line>
                     </svg>
                 </div>
-                <h3 class="section-title mt-24 mb-8 text-danger">Payment Failed</h3>
-                <p class="text-muted text-sm mb-24">A network error occurred. Please check your connection and try again.</p>
+                <h3 class="section-title mt-20 mb-8 text-danger">Payment Failed</h3>
+                <p class="text-muted text-sm mb-20">A network error occurred. Please check your connection and try again.</p>
                 <button class="btn-secondary full-width" onclick="app.closePaymentModalError()">Close & Try Again</button>
             </div>
 

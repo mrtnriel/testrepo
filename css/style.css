@@ -64,6 +64,7 @@ img { max-width: 100%; height: auto; display: block; }
 .mt-0 { margin-top: 0 !important; }
 .mt-8 { margin-top: 8px; }
 .mt-16 { margin-top: 16px; }
+.mt-20 { margin-top: 20px; }
 .mt-24 { margin-top: 24px; }
 .mt-32 { margin-top: 32px; }
 .mt-40 { margin-top: 40px; }
@@ -188,7 +189,8 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 /* Milestones Editor */
 .milestones-editor { display: flex; flex-direction: column; gap: 12px; }
 .milestone-row { display: flex; gap: 16px; align-items: flex-start; background: #f8fafc; padding: 12px; border-radius: 8px; border: 1px solid var(--clr-border); flex-wrap: wrap; }
-.milestone-row > div { display: flex; flex-direction: column; gap: 6px; }
+.milestone-field { flex: 1; display: flex; flex-direction: column; gap: 6px; }
+.milestone-field label { font-size: 11px; color: var(--clr-text-muted); }
 .milestone-summary { margin-top: 16px; padding-top: 16px; border-top: 1px dashed var(--clr-border); text-align: right; font-size: 14px; display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
 
 /* --- Projects List & Dashboard --- */
@@ -258,7 +260,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
 /* --- Modals & Overlays --- */
 .modal-overlay { position: fixed; inset: 0; background-color: rgba(15, 39, 76, 0.6); z-index: 100; display: flex; align-items: center; justify-content: center; padding: 16px; opacity: 1; transition: opacity 0.3s ease; }
-.modal-overlay.hidden { display: none !important; opacity: 0; }
+.modal-overlay.hidden { display: none !important; opacity: 0; pointer-events: none; }
 
 @keyframes popInModal {
     0% { opacity: 0; transform: scale(0.85); }
@@ -285,20 +287,20 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 .invoice-total { font-size: 20px; font-weight: 700; color: var(--clr-primary-btn); }
 
 /* Success & Error Modal specifics */
-.success-modal-content { padding: 40px 24px; border-radius: 20px; background: linear-gradient(180deg, #e6f0fa 0%, #f8fafc 100%); border: none; }
-.success-icon-large { width: 72px; height: 72px; background-color: #2F9E5B; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; margin: 0 auto; box-shadow: 0 8px 16px rgba(47, 158, 91, 0.2); }
-.success-icon-large svg { width: 36px; height: 36px; }
+.success-modal-content { padding: 32px 24px; border-radius: 20px; background: linear-gradient(180deg, #e6f0fa 0%, #f8fafc 100%); border: none; }
+.success-icon-large { width: 64px; height: 64px; background-color: #2F9E5B; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; margin: 0 auto; box-shadow: 0 8px 16px rgba(47, 158, 91, 0.2); }
+.success-icon-large svg { width: 32px; height: 32px; }
 .success-heading { font-size: 18px; font-weight: 600; color: #0A2A57; }
-.success-amount { font-size: 36px; font-weight: 800; color: #0A2A57; }
+.success-amount { font-size: 32px; font-weight: 800; color: #0A2A57; }
 
 /* Loading State Specifics */
 .state-container { display: block; animation: fadeIn 0.4s ease forwards; }
 .state-container.hidden { display: none; animation: none; }
 @keyframes spin { to { transform: rotate(360deg); } }
-.large-spinner { width: 60px; height: 60px; border: 4px solid var(--clr-border); border-top-color: var(--clr-primary-btn); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto; }
+.large-spinner { width: 56px; height: 56px; border: 4px solid var(--clr-border); border-top-color: var(--clr-primary-btn); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto; }
 
-.error-icon-large { width: 72px; height: 72px; background-color: #fef2f2; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--clr-summary-orange); margin: 0 auto; border: 2px solid #fecaca; }
-.error-icon-large svg { width: 36px; height: 36px; }
+.error-icon-large { width: 64px; height: 64px; background-color: #fef2f2; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--clr-summary-orange); margin: 0 auto; border: 2px solid #fecaca; }
+.error-icon-large svg { width: 32px; height: 32px; }
 
 /* --- RESPONSIVE QUERIES --- */
 /* Enhanced Mobile Compaction */
@@ -311,7 +313,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 
 @media (max-width: 768px) {
-    /* Header adjustments to prevent horizontal overflow */
+    /* Header adjustments */
     .header { padding: 0 16px; }
     .header-left, .header-right { gap: 8px; }
     .hide-on-mobile { display: none !important; }
@@ -337,7 +339,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     .balance-label { font-size: 13px; margin-bottom: 4px; }
     .balance-amount { font-size: 22px; }
     .balance-actions { width: 100%; margin-top: 4px; }
-    .btn-primary.full-width-mobile { min-height: 42px; font-size: 14px; }
+    .btn-primary, .btn-secondary { min-height: 40px; font-size: 14px; padding: 10px 16px; }
     
     .summary-grid { gap: 12px; }
     .summary-title { font-size: 14px; margin-bottom: 8px; }
@@ -346,17 +348,28 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     .small-card-amount { font-size: 18px; }
     
     /* Margin overrides to compress vertical height on forms */
-    .mb-24 { margin-bottom: 16px; }
-    .mt-32 { margin-top: 20px; }
-    .mt-40 { margin-top: 24px; }
+    .mb-24 { margin-bottom: 16px !important; }
+    .mt-32 { margin-top: 20px !important; }
+    .mt-40 { margin-top: 24px !important; }
     
     /* Wizard specific tweaks for mobile */
-    .wizard-progress { padding: 0 16px; }
-    .progress-step { padding: 12px 8px; font-size: 12px; min-width: auto; }
+    .wizard-progress { padding: 0 8px; }
+    .progress-step { padding: 12px 4px; font-size: 12px; min-width: 80px; }
     .wizard-padding-mobile { padding: 16px !important; }
 
     .form-grid { grid-template-columns: 1fr; gap: 12px; }
     .form-span-full { grid-column: auto; }
+    .form-control { padding: 10px 12px; min-height: 40px; }
+    .form-group { gap: 4px; }
+    
+    /* Penalty Grid side-by-side on mobile */
+    .penalty-grid { grid-template-columns: 1fr 1fr; }
+    .penalty-grid .form-span-full { grid-column: 1 / -1; }
+
+    /* Milestone Row Grid on Mobile */
+    .milestone-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; align-items: start; }
+    .milestone-row .name-field { grid-column: 1 / -1; }
+    .milestone-field { min-width: 0 !important; }
     
     /* Navigation Step Buttons Stacked Hierarchy */
     .wizard-actions { flex-direction: column-reverse; gap: 12px; }
@@ -369,7 +382,17 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     
     .full-width-mobile { width: 100%; }
 
-    .modal-header, .modal-body, .modal-footer { padding: 16px; }
+    /* Modals compaction */
+    .modal-content { max-height: 85vh; }
+    .modal-header, .modal-footer { padding: 12px 16px; }
+    .modal-body { padding: 16px; }
+    .success-modal-content { padding: 24px 16px; }
+    .success-icon-large, .error-icon-large { width: 52px; height: 52px; margin-bottom: 16px; }
+    .success-icon-large svg, .error-icon-large svg { width: 28px; height: 28px; }
+    .large-spinner { width: 44px; height: 44px; }
+    .success-amount { font-size: 28px; margin-bottom: 16px; }
+    
+    .review-block { padding: 12px !important; margin-bottom: 12px !important; }
 }
 
 @media (max-width: 480px) {
@@ -386,6 +409,4 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     .invoice-row { flex-direction: column; text-align: left; gap: 4px; }
     .invoice-row strong { text-align: left; }
     .invoice-row.align-center { flex-direction: row; align-items: center; justify-content: space-between; }
-    
-    .success-amount { font-size: 32px; }
 }
