@@ -55,7 +55,7 @@ img { max-width: 100%; height: auto; display: block; }
 .text-muted { color: var(--clr-text-muted); }
 .text-sm { font-size: 13px; }
 .m-0 { margin: 0; }
-.mb-16 { margin-bottom: 16px; }
+.mb-16 { margin-bottom: 16px !important; }
 .mb-20 { margin-bottom: 20px; }
 .mb-24 { margin-bottom: 24px; }
 .mt-0 { margin-top: 0 !important; }
@@ -68,8 +68,8 @@ img { max-width: 100%; height: auto; display: block; }
 .justify-between { justify-content: space-between; }
 .align-center { align-items: center; }
 .bg-success-light { background: #f0fdf4; border-color: #bbf7d0; }
-.bg-success { background-color: var(--clr-summary-green) !important; }
-.hide-on-mobile { display: flex; flex-direction: column; } /* Default display for the user-info wrapper */
+.bg-success { background-color: var(--clr-summary-green) !important; color: #fff; border-color: var(--clr-summary-green); }
+.hide-on-mobile { display: flex; flex-direction: column; } 
 
 /* --- App Views --- */
 .app-view { display: flex; flex-direction: column; flex: 1; }
@@ -105,7 +105,6 @@ img { max-width: 100%; height: auto; display: block; }
 .app-container.sidebar-collapsed .collapse-btn svg { transform: rotate(180deg); }
 .app-container.sidebar-collapsed .nav-text { opacity: 0; pointer-events: none; }
 
-/* Mobile Backdrop */
 .sidebar-backdrop { display: none; position: absolute; inset: 0; background-color: rgba(0, 0, 0, 0.5); z-index: 15; opacity: 0; transition: opacity 0.3s ease; }
 .app-container.mobile-menu-open .sidebar-backdrop { display: block; opacity: 1; }
 
@@ -144,21 +143,31 @@ img { max-width: 100%; height: auto; display: block; }
 .btn-outline:hover { background-color: var(--clr-primary-btn); color: white; }
 .full-width { width: 100%; }
 
-/* --- Forms --- */
+/* --- Forms & Wizard --- */
 .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 .form-group { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
 .form-span-full { grid-column: 1 / -1; }
 .form-group label { font-size: 13px; font-weight: 600; color: var(--clr-text-main); }
 .form-control { padding: 12px 14px; border: 1px solid var(--clr-border); border-radius: 8px; font-size: 14px; font-family: inherit; transition: border-color 0.2s; width: 100%; min-height: 44px; }
 .form-control:focus { outline: none; border-color: var(--clr-primary-btn); }
-.form-actions { display: flex; gap: 16px; justify-content: flex-end; flex-wrap: wrap; }
+.form-control:read-only { background-color: #f8fafc; cursor: not-allowed; color: var(--clr-text-muted); }
+.form-actions { display: flex; gap: 16px; flex-wrap: wrap; }
+
+/* Wizard Styling */
+@keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+.wizard-step { display: none; }
+.wizard-step.active { display: block; animation: fadeIn 0.3s ease forwards; }
+
+.wizard-progress { display: flex; background: #f8fafc; border-bottom: 1px solid var(--clr-border); padding: 0 32px; }
+.progress-step { flex: 1; text-align: center; padding: 16px 8px; font-size: 13px; font-weight: 500; color: var(--clr-text-muted); border-bottom: 3px solid transparent; transition: all 0.3s; }
+.progress-step.active { color: var(--clr-primary-btn); font-weight: 700; border-bottom-color: var(--clr-primary-btn); }
+.progress-step.completed { color: var(--clr-summary-green); }
 
 /* Milestones Editor */
 .milestones-editor { display: flex; flex-direction: column; gap: 12px; }
 .milestone-row { display: flex; gap: 16px; align-items: center; background: #f8fafc; padding: 12px; border-radius: 8px; border: 1px solid var(--clr-border); flex-wrap: wrap; }
 .milestone-row input { flex: 1; min-width: 120px; }
 .milestone-summary { margin-top: 16px; padding-top: 16px; border-top: 1px dashed var(--clr-border); text-align: right; font-size: 14px; display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
-.warning-text { font-size: 12px; font-weight: 500; }
 
 /* --- Projects List & Dashboard --- */
 .projects-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 24px; }
@@ -245,8 +254,6 @@ img { max-width: 100%; height: auto; display: block; }
 .invoice-total { font-size: 20px; font-weight: 700; color: var(--clr-primary-btn); }
 
 /* --- RESPONSIVE QUERIES --- */
-
-/* Tablets / Small Laptops */
 @media (max-width: 1024px) {
     .summary-grid { grid-template-columns: repeat(2, 1fr); }
     .detail-grid { grid-template-columns: 1fr; } 
@@ -255,43 +262,39 @@ img { max-width: 100%; height: auto; display: block; }
     .section-bottom { padding: 24px 32px 40px 32px; }
 }
 
-/* Mobile Phones (Aggressive Space Saving & Scroll Reduction) */
 @media (max-width: 768px) {
-    /* Header adjustments to prevent horizontal overflow */
     .header { padding: 0 12px; }
     .header-left, .header-right { gap: 8px; }
     .hide-on-mobile { display: none !important; }
     .mobile-menu-btn { display: block; }
     
-    /* Sidebar toggling */
     .sidebar { position: absolute; left: -100%; top: 0; bottom: 0; z-index: 20; }
     .app-container.mobile-menu-open .sidebar { left: 0; transform: translateX(0); }
     .collapse-btn { display: none; }
     
-    /* Drastically reduced vertical padding to minimize scrolling */
     .section-top { padding: 16px; }
     .section-bottom { padding: 16px 16px 24px 16px; }
     .card { padding: 16px; }
     
-    /* Scaled down typography */
     .page-title { font-size: 20px; }
     .section-title { font-size: 16px; margin-bottom: 12px; }
     .balance-amount { font-size: 20px; }
     
-    /* Margin overrides to compress vertical height */
     .mb-24 { margin-bottom: 16px; }
     .mt-32 { margin-top: 20px; }
     .mt-40 { margin-top: 24px; }
     
     .summary-grid { grid-template-columns: 1fr; gap: 16px; }
     
-    /* Form grids and milestones compaction */
+    /* Wizard specific tweaks for mobile */
+    .wizard-progress { padding: 0 16px; flex-wrap: wrap; }
+    .progress-step { padding: 12px 4px; font-size: 12px; }
+    .card > div[style*="padding: 32px"] { padding: 16px !important; }
+
     .form-grid { grid-template-columns: 1fr; gap: 12px; }
     .form-span-full { grid-column: auto; }
     .milestone-row { flex-direction: column; align-items: stretch; }
-    .milestone-row .btn-secondary { align-self: flex-end; padding: 8px 16px; }
     
-    /* Timeline adjustments */
     .timeline-item { padding-bottom: 16px; }
     .tl-content { flex-direction: column; align-items: stretch; gap: 12px; }
     .tl-amount { text-align: left; }
@@ -302,16 +305,13 @@ img { max-width: 100%; height: auto; display: block; }
     .wallet-details { align-items: flex-start; margin-top: 8px; }
     .section-top-header { flex-direction: column; align-items: flex-start; gap: 8px; }
 
-    /* Modal adjustments */
     .modal-header, .modal-body, .modal-footer { padding: 16px; }
 }
 
-/* Extra Small Phones */
 @media (max-width: 480px) {
     .projects-grid { grid-template-columns: 1fr; }
     .balance-card { flex-direction: column; align-items: flex-start; gap: 16px; }
     .balance-actions { width: 100%; }
-    .form-actions { flex-direction: column; }
     
     .receipt-row { flex-direction: column; text-align: left; gap: 4px; }
     .receipt-row strong { text-align: left; }

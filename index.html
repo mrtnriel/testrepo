@@ -26,7 +26,6 @@
             <div class="header-right">
                 <div class="user-profile">
                     <div class="user-avatar">RM</div>
-                    <!-- Added hide-on-mobile to prevent header squishing and horizontal overflow -->
                     <div class="user-info hide-on-mobile">
                         <div class="user-name text-truncate">Rhea Mae Narag</div>
                         <div class="user-email text-truncate">rheamaespnarag@gmail.com</div>
@@ -59,7 +58,6 @@
                 </button>
             </aside>
             
-            <!-- Mobile Sidebar Backdrop -->
             <div id="mobileBackdrop" class="sidebar-backdrop"></div>
 
             <!-- Main Content Area -->
@@ -133,80 +131,125 @@
                     </section>
                 </div>
 
-                <!-- VIEW 3: CREATE PROJECT -->
+                <!-- VIEW 3: CREATE PROJECT WIZARD -->
                 <div id="view-project-create" class="app-view hidden">
                     <section class="section-top">
+                        <button class="btn-secondary btn-sm mb-16" onclick="app.switchView('view-projects-list')">← Cancel & Back</button>
                         <h1 class="page-title">Create New Project</h1>
                     </section>
                     <section class="section-bottom">
-                        <div class="card" style="max-width: 800px; margin: 0 auto;">
-                            <form id="create-project-form" onsubmit="app.handleCreateProject(event)">
-                                
-                                <h3 class="section-title">Customer Details</h3>
-                                <div class="form-grid">
-                                    <div class="form-group">
-                                        <label>Customer Name</label>
-                                        <input type="text" id="custName" class="form-control" required>
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Mobile Number</label>
-                                        <input type="tel" id="custMobile" class="form-control" required>
-                                    </div>
-                                    <div class="form-group form-span-full">
-                                        <label>Email Address</label>
-                                        <input type="email" id="custEmail" class="form-control">
-                                    </div>
-                                </div>
+                        <div class="card" style="max-width: 800px; margin: 0 auto; padding: 0; overflow: hidden;">
+                            
+                            <!-- Wizard Progress Bar -->
+                            <div class="wizard-progress">
+                                <div class="progress-step active" id="indicator-step-1">1. Customer</div>
+                                <div class="progress-step" id="indicator-step-2">2. Order</div>
+                                <div class="progress-step" id="indicator-step-3">3. Milestones</div>
+                                <div class="progress-step" id="indicator-step-4">4. Penalty</div>
+                            </div>
 
-                                <h3 class="section-title mt-32">Order Details</h3>
-                                <div class="form-grid">
-                                    <div class="form-group form-span-full">
-                                        <label>Project / Order Name</label>
-                                        <input type="text" id="projName" class="form-control" required>
+                            <div style="padding: 32px;">
+                                <form id="create-project-form" onsubmit="app.handleCreateProject(event)">
+                                    
+                                    <!-- STEP 1: CUSTOMER DETAILS -->
+                                    <div class="wizard-step active" id="wizard-step-1">
+                                        <h3 class="section-title mt-0">Customer Details</h3>
+                                        <p class="text-muted text-sm mb-24">Please provide the contact details for the customer receiving this order.</p>
+                                        <div class="form-grid">
+                                            <div class="form-group">
+                                                <label>Customer Name *</label>
+                                                <input type="text" id="custName" class="form-control" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Mobile Number *</label>
+                                                <input type="tel" id="custMobile" class="form-control" required>
+                                            </div>
+                                            <div class="form-group form-span-full">
+                                                <label>Email Address</label>
+                                                <input type="email" id="custEmail" class="form-control">
+                                            </div>
+                                        </div>
+                                        <div class="form-actions mt-40">
+                                            <button type="button" class="btn-primary full-width-mobile" onclick="app.nextWizardStep(1)">Next Step &rarr;</button>
+                                        </div>
                                     </div>
-                                    <div class="form-group">
-                                        <label>Total Amount (₱)</label>
-                                        <input type="number" id="projTotal" class="form-control" min="1" step="0.01" required onchange="app.validateMilestones()">
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Expected Completion</label>
-                                        <input type="date" id="projDate" class="form-control" required>
-                                    </div>
-                                </div>
 
-                                <h3 class="section-title mt-32 d-flex justify-between align-center flex-wrap">
-                                    <span>Payment Milestones</span>
-                                    <button type="button" class="btn-secondary btn-sm" onclick="app.addMilestoneRow()">+ Add Milestone</button>
-                                </h3>
-                                <div id="milestones-container" class="milestones-editor">
-                                    <!-- Dynamic rows -->
-                                </div>
-                                <div class="milestone-summary">
-                                    <span>Total Allocated: <strong id="milestone-allocated">₱0.00</strong></span>
-                                    <div id="milestone-warning" class="color-orange warning-text" style="display:none;">Amounts must equal Total Project Amount.</div>
-                                </div>
+                                    <!-- STEP 2: ORDER DETAILS -->
+                                    <div class="wizard-step" id="wizard-step-2">
+                                        <h3 class="section-title mt-0">Order Details</h3>
+                                        <p class="text-muted text-sm mb-24">Enter the core details and total valuation of this project.</p>
+                                        <div class="form-grid">
+                                            <div class="form-group form-span-full">
+                                                <label>Project / Order Name *</label>
+                                                <input type="text" id="projName" class="form-control" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Total Amount (₱) *</label>
+                                                <input type="number" id="projTotal" class="form-control" min="1" step="0.01" required onchange="app.generateMilestones()">
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Expected Completion *</label>
+                                                <input type="date" id="projDate" class="form-control" required>
+                                            </div>
+                                        </div>
+                                        <div class="form-actions mt-40" style="justify-content: space-between;">
+                                            <button type="button" class="btn-secondary full-width-mobile mb-16" onclick="app.prevWizardStep(2)">&larr; Back</button>
+                                            <button type="button" class="btn-primary full-width-mobile" onclick="app.nextWizardStep(2)">Next Step &rarr;</button>
+                                        </div>
+                                    </div>
 
-                                <h3 class="section-title mt-32">Penalty Fee (Optional)</h3>
-                                <div class="form-grid">
-                                    <div class="form-group">
-                                        <label>Penalty Amount (₱)</label>
-                                        <input type="number" id="projPenaltyAmt" class="form-control" min="0" step="0.01" placeholder="e.g. 500">
-                                    </div>
-                                    <div class="form-group">
-                                        <label>When to Charge</label>
-                                        <input type="text" id="projPenaltyWhen" class="form-control" placeholder="e.g. 3 days after due date">
-                                    </div>
-                                    <div class="form-group form-span-full">
-                                        <label>Condition / Reason</label>
-                                        <input type="text" id="projPenaltyReason" class="form-control" placeholder="e.g. Late pickup or payment delay">
-                                    </div>
-                                </div>
+                                    <!-- STEP 3: PAYMENT MILESTONES -->
+                                    <div class="wizard-step" id="wizard-step-3">
+                                        <h3 class="section-title mt-0">Payment Milestones</h3>
+                                        <p class="text-muted text-sm mb-24">Specify how many payments this project will be split into. The system will automatically calculate equal payments.</p>
+                                        
+                                        <div class="form-grid mb-24">
+                                            <div class="form-group">
+                                                <label>Number of Milestones *</label>
+                                                <input type="number" id="projMilestoneCount" class="form-control" min="1" max="12" value="2" required onchange="app.generateMilestones()">
+                                            </div>
+                                        </div>
 
-                                <div class="form-actions mt-40">
-                                    <button type="button" class="btn-secondary full-width-mobile" onclick="app.switchView('view-projects-list')">Cancel</button>
-                                    <button type="submit" class="btn-primary full-width-mobile" id="btn-save-project">Create Project</button>
-                                </div>
-                            </form>
+                                        <div id="milestones-container" class="milestones-editor">
+                                            <!-- Dynamically generated rows based on equal split -->
+                                        </div>
+                                        
+                                        <div class="milestone-summary">
+                                            <span>Total Allocated: <strong id="milestone-allocated">₱0.00</strong></span>
+                                        </div>
+
+                                        <div class="form-actions mt-40" style="justify-content: space-between;">
+                                            <button type="button" class="btn-secondary full-width-mobile mb-16" onclick="app.prevWizardStep(3)">&larr; Back</button>
+                                            <button type="button" class="btn-primary full-width-mobile" onclick="app.nextWizardStep(3)">Next Step &rarr;</button>
+                                        </div>
+                                    </div>
+
+                                    <!-- STEP 4: PENALTY (OPTIONAL) & SUBMIT -->
+                                    <div class="wizard-step" id="wizard-step-4">
+                                        <h3 class="section-title mt-0">Penalty Fee <span class="text-muted text-sm" style="font-weight: normal;">(Optional)</span></h3>
+                                        <p class="text-muted text-sm mb-24">Define rules for late payments or delayed pickups. Leave blank if not applicable.</p>
+                                        <div class="form-grid">
+                                            <div class="form-group">
+                                                <label>Penalty Amount (₱)</label>
+                                                <input type="number" id="projPenaltyAmt" class="form-control" min="0" step="0.01" placeholder="e.g. 500">
+                                            </div>
+                                            <div class="form-group">
+                                                <label>When to Charge</label>
+                                                <input type="text" id="projPenaltyWhen" class="form-control" placeholder="e.g. 3 days after due date">
+                                            </div>
+                                            <div class="form-group form-span-full">
+                                                <label>Condition / Reason</label>
+                                                <input type="text" id="projPenaltyReason" class="form-control" placeholder="e.g. Late pickup or payment delay">
+                                            </div>
+                                        </div>
+                                        <div class="form-actions mt-40" style="justify-content: space-between;">
+                                            <button type="button" class="btn-secondary full-width-mobile mb-16" onclick="app.prevWizardStep(4)">&larr; Back</button>
+                                            <button type="submit" class="btn-primary full-width-mobile bg-success" id="btn-save-project">Create Project</button>
+                                        </div>
+                                    </div>
+
+                                </form>
+                            </div>
                         </div>
                     </section>
                 </div>
@@ -214,7 +257,7 @@
                 <!-- VIEW 4: PROJECT DETAIL -->
                 <div id="view-project-detail" class="app-view hidden">
                     <section class="section-top">
-                        <button class="btn-secondary" style="margin-bottom: 16px;" onclick="app.switchView('view-projects-list')">← Back to Projects</button>
+                        <button class="btn-secondary mb-16" onclick="app.switchView('view-projects-list')">← Back to Projects</button>
                         <div class="section-top-header">
                             <div>
                                 <h1 class="page-title text-truncate" id="det-name">Project Name</h1>
@@ -283,7 +326,7 @@
                 <!-- VIEW 5: CUSTOMER CHECKOUT -->
                 <div id="view-checkout" class="app-view hidden">
                     <section class="section-top">
-                        <button class="btn-secondary" style="margin-bottom: 16px;" onclick="app.openProjectDetail(app.currentProjectViewId)">← Cancel Payment</button>
+                        <button class="btn-secondary mb-16" onclick="app.openProjectDetail(app.currentProjectViewId)">← Cancel Payment</button>
                         <h1 class="page-title">Make a Payment</h1>
                     </section>
                     <section class="section-bottom">

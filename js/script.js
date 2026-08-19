@@ -1,6 +1,6 @@
 /**
  * G-Milestone Core Workflow Implementation
- * Refactored from simple POS to Project/Milestone System
+ * Refactored to include chronological Wizard flow and automated milestones.
  */
 
 const app = {
@@ -9,6 +9,10 @@ const app = {
     transactions: [],
     currentProjectViewId: null,
     currentCheckoutMilestoneIdx: null,
+    
+    // Wizard State
+    currentWizardStep: 1,
+    totalWizardSteps: 4,
 
     // Status Enums
     STATUS: {
@@ -101,57 +105,114 @@ const app = {
         document.getElementById('dash-active-count').innerText = activeCount;
     },
 
-    // --- Core Logic: Create Project ---
+    // --- Core Logic: Wizard Flow & Create Project ---
     showCreateProject() {
+        // Reset form data
         document.getElementById('create-project-form').reset();
         document.getElementById('milestones-container').innerHTML = '';
         
-        // Reset the new penalty fields
-        document.getElementById('projPenaltyAmt').value = '';
-        document.getElementById('projPenaltyWhen').value = '';
-        document.getElementById('projPenaltyReason').value = '';
+        // Reset Wizard to Step 1
+        this.currentWizardStep = 1;
+        this.updateWizardUI();
 
-        this.addMilestoneRow('Initial Payment', 0);
-        this.addMilestoneRow('Final Payment', 0);
-        this.validateMilestones();
         this.switchView('view-project-create');
     },
 
-    addMilestoneRow(defaultName = '', defaultAmt = '') {
-        const container = document.getElementById('milestones-container');
-        const row = document.createElement('div');
-        row.className = 'milestone-row';
-        row.innerHTML = `
-            <input type="text" class="form-control m-name" placeholder="Milestone Name (e.g. Downpayment)" value="${defaultName}" required>
-            <input type="number" class="form-control m-amt" placeholder="Amount ₱" value="${defaultAmt}" step="0.01" min="1" required onchange="app.validateMilestones()">
-            <button type="button" class="btn-secondary" style="color: var(--clr-summary-orange);" onclick="this.parentElement.remove(); app.validateMilestones();" aria-label="Remove milestone">Remove</button>
-        `;
-        container.appendChild(row);
+    updateWizardUI() {
+        // Hide all steps, un-highlight all indicators
+        for (let i = 1; i <= this.totalWizardSteps; i++) {
+            document.getElementById(`wizard-step-${i}`).classList.remove('active');
+            const indicator = document.getElementById(`indicator-step-${i}`);
+            indicator.classList.remove('active', 'completed');
+            
+            // Mark previous steps as completed
+            if (i < this.currentWizardStep) {
+                indicator.classList.add('completed');
+            } else if (i === this.currentWizardStep) {
+                indicator.classList.add('active');
+            }
+        }
+        
+        // Show current step
+        document.getElementById(`wizard-step-${this.currentWizardStep}`).classList.add('active');
+
+        // Trigger milestone generation safely when arriving at step 3
+        if (this.currentWizardStep === 3) {
+            this.generateMilestones();
+        }
     },
 
-    validateMilestones() {
-        const totalInput = parseFloat(document.getElementById('projTotal').value) || 0;
-        const amtInputs = document.querySelectorAll('.m-amt');
-        let currentSum = 0;
-        
-        amtInputs.forEach(inp => { currentSum += (parseFloat(inp.value) || 0); });
-        
-        document.getElementById('milestone-allocated').innerText = `₱${this.formatMoney(currentSum)}`;
-        const warning = document.getElementById('milestone-warning');
-        const btnSave = document.getElementById('btn-save-project');
+    validateCurrentStep() {
+        const stepEl = document.getElementById(`wizard-step-${this.currentWizardStep}`);
+        const inputs = stepEl.querySelectorAll('input[required]');
+        let isValid = true;
 
-        if (currentSum !== totalInput && totalInput > 0) {
-            warning.style.display = 'block';
-            btnSave.disabled = true;
-        } else {
-            warning.style.display = 'none';
-            btnSave.disabled = false;
+        inputs.forEach(input => {
+            if (!input.checkValidity()) {
+                input.reportValidity();
+                isValid = false;
+            }
+        });
+        return isValid;
+    },
+
+    nextWizardStep(stepCalledFrom) {
+        // Ensure we are operating on the correct logic
+        if (this.currentWizardStep !== stepCalledFrom) return;
+        
+        // Prevent progressing if HTML5 validation fails
+        if (!this.validateCurrentStep()) return;
+
+        if (this.currentWizardStep < this.totalWizardSteps) {
+            this.currentWizardStep++;
+            this.updateWizardUI();
         }
+    },
+
+    prevWizardStep(stepCalledFrom) {
+        if (this.currentWizardStep !== stepCalledFrom) return;
+
+        if (this.currentWizardStep > 1) {
+            this.currentWizardStep--;
+            this.updateWizardUI();
+        }
+    },
+
+    // Auto-calculate equal milestones
+    generateMilestones() {
+        const total = parseFloat(document.getElementById('projTotal').value) || 0;
+        let count = parseInt(document.getElementById('projMilestoneCount').value) || 1;
+        if (count < 1) count = 1; // Safeguard
+
+        const container = document.getElementById('milestones-container');
+        container.innerHTML = '';
+        
+        const splitAmount = total / count;
+        
+        for (let i = 1; i <= count; i++) {
+            let defaultName = `Milestone ${i}`;
+            if (count === 1) defaultName = "Full Payment";
+            else if (i === 1) defaultName = "Downpayment";
+            else if (i === count) defaultName = "Final Payment";
+
+            const row = document.createElement('div');
+            row.className = 'milestone-row';
+            row.innerHTML = `
+                <input type="text" class="form-control m-name" placeholder="Milestone Name" value="${defaultName}" required>
+                <input type="number" class="form-control m-amt" placeholder="Amount ₱" value="${splitAmount.toFixed(2)}" step="0.01" min="1" required readonly tabindex="-1">
+            `;
+            container.appendChild(row);
+        }
+
+        document.getElementById('milestone-allocated').innerText = `₱${this.formatMoney(total)}`;
     },
 
     handleCreateProject(e) {
         e.preventDefault();
         
+        // Final sanity check
+        if (!this.validateCurrentStep()) return;
+
         const mNames = document.querySelectorAll('.m-name');
         const mAmts = document.querySelectorAll('.m-amt');
         const milestones = [];
@@ -166,7 +227,6 @@ const app = {
             });
         }
 
-        // Grab the new penalty values
         const penaltyAmt = parseFloat(document.getElementById('projPenaltyAmt').value) || 0;
         const penaltyWhen = document.getElementById('projPenaltyWhen').value;
         const penaltyReason = document.getElementById('projPenaltyReason').value;
@@ -183,14 +243,11 @@ const app = {
             expectedDate: document.getElementById('projDate').value,
             status: 'DRAFT',
             milestones: milestones,
-            
-            // Save the penalty fee details to the project object
             penalty: {
                 amount: penaltyAmt,
                 when: penaltyWhen,
                 reason: penaltyReason
             },
-            
             createdAt: new Date().toISOString()
         };
 
@@ -282,10 +339,8 @@ const app = {
             } else if (m.requested) {
                 stateClass = 'active';
                 metaText = 'Payment Requested';
-                // Trigger checkout view instead of direct payment simulation
                 actionsHtml = `<button class="btn-primary btn-sm" onclick="app.openCheckout('${p.id}', ${idx})">Simulate GCash Pay</button>`;
             } else {
-                // Not requested yet
                 actionsHtml = `<button class="btn-outline btn-sm" onclick="app.sendPaymentRequest('${p.id}', ${idx})">Send Request</button>`;
             }
 
@@ -305,9 +360,8 @@ const app = {
             `;
         });
 
-        // "Mark Order Ready" Logic
+        // Mark Order Ready Logic
         const readyCard = document.getElementById('ready-action-card');
-        // Only show if IN_PROGRESS or PARTIALLY_PAID and there's a final pending milestone
         if ((p.status === 'IN_PROGRESS' || p.status === 'PARTIALLY_PAID') && p.milestones.some(m => !m.paid)) {
             readyCard.style.display = 'block';
         } else {
@@ -326,7 +380,6 @@ const app = {
         const p = this.projects.find(x => x.id === projId);
         const m = p.milestones[milestoneIdx];
         
-        // Populate the receipt breakdown
         const breakdown = document.getElementById('checkout-breakdown');
         breakdown.innerHTML = `
             <div class="receipt-row"><span>Project:</span> <strong>${p.name}</strong></div>
@@ -334,7 +387,6 @@ const app = {
             <div class="receipt-row"><span>Milestone:</span> <strong>${m.name}</strong></div>
         `;
         
-        // Set the input amount to the milestone total
         document.getElementById('checkout-amount-input').value = m.amount;
         
         this.switchView('view-checkout');
@@ -348,7 +400,6 @@ const app = {
             return;
         }
 
-        // Trigger the payment simulation logic
         this.simulateCustomerPay(this.currentProjectViewId, this.currentCheckoutMilestoneIdx);
     },
 
@@ -357,11 +408,7 @@ const app = {
         if(!p) return;
 
         p.milestones[milestoneIdx].requested = true;
-        
-        // Update Project Status if Draft
-        if(p.status === 'DRAFT') {
-            p.status = 'PAYMENT_REQUESTED';
-        }
+        if(p.status === 'DRAFT') p.status = 'PAYMENT_REQUESTED';
 
         alert(`Payment Request for ₱${this.formatMoney(p.milestones[milestoneIdx].amount)} successfully sent to ${p.customer.mobile}.`);
         this.openProjectDetail(projId);
@@ -373,22 +420,19 @@ const app = {
         
         const m = p.milestones[milestoneIdx];
         
-        // 1. Update Milestone Status
         m.paid = true;
         m.paidDate = new Date().toISOString();
 
-        // 2. Record Transaction
         const newTxnId = 'TXN-' + Math.random().toString(36).substring(2, 9).toUpperCase();
         this.transactions.unshift({
             id: newTxnId,
             projName: p.name,
-            customerName: p.customer.name, // Record customer for the invoice
+            customerName: p.customer.name,
             milestoneName: m.name,
             amount: m.amount,
             date: m.paidDate
         });
 
-        // 3. Automate Project Status Progression
         const allPaid = p.milestones.every(x => x.paid);
         const anyPaid = p.milestones.some(x => x.paid);
 
@@ -405,7 +449,6 @@ const app = {
             alert(`Payment Authorized!`);
         }
 
-        // 4. Update nav state to reflect Transactions tab to user visually, route, and pop Invoice
         document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
         document.querySelector('[data-target="view-transactions"]').classList.add('active');
         
@@ -420,7 +463,6 @@ const app = {
 
         p.status = 'READY';
 
-        // Automatically find next unpaid milestone and request it
         const nextMilestoneIdx = p.milestones.findIndex(m => !m.paid && !m.requested);
         if (nextMilestoneIdx !== -1) {
             p.milestones[nextMilestoneIdx].requested = true;
