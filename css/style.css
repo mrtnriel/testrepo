@@ -77,6 +77,9 @@ img { max-width: 100%; height: auto; display: block; }
 .bg-success { background-color: var(--clr-summary-green) !important; color: #fff; border-color: var(--clr-summary-green); }
 .hide-on-mobile { display: flex; flex-direction: column; } 
 
+/* Contextual Navigation */
+.mobile-back-btn { display: none; }
+
 /* --- App Views --- */
 .app-view { display: flex; flex-direction: column; flex: 1; }
 .app-view.hidden { display: none !important; }
@@ -330,8 +333,8 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     .app-container.mobile-menu-open .sidebar { left: 0; transform: translateX(0); }
     .collapse-btn { display: none; }
     
-    /* Drastically reduced vertical padding to minimize scrolling on the dashboard */
-    .section-top { padding: 16px 16px 8px 16px; }
+    /* Drastically reduced vertical padding to minimize scrolling on the dashboard and headers */
+    .section-top { padding: 12px 16px 8px 16px; }
     .section-bottom { padding: 8px 16px 24px 16px; }
     
     /* Scaled down typography for mobile */
@@ -363,6 +366,9 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     .mt-32 { margin-top: 20px !important; }
     .mt-40 { margin-top: 24px !important; }
     
+    /* Contextual Navigation Buttons */
+    .mobile-back-btn { display: inline-flex; }
+
     /* Wizard specific tweaks for mobile */
     .wizard-progress { padding: 0 8px; }
     .progress-step { padding: 12px 4px; font-size: 12px; min-width: 80px; }

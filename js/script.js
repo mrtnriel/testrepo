@@ -11,6 +11,10 @@ const app = {
     currentCheckoutMilestoneIdx: null,
     pendingTxnId: null, // Temporary store for the success-to-invoice routing
     
+    // View Management
+    currentViewId: 'view-wallet',
+    history: [],
+
     // Wizard State
     currentWizardStep: 1,
     totalWizardSteps: 5,
@@ -59,20 +63,21 @@ const app = {
                 e.preventDefault();
                 const targetId = item.getAttribute('data-target');
                 if (!targetId) return;
-
-                document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
-                item.classList.add('active');
-                this.switchView(targetId);
-
-                // Close mobile menu after navigating
-                if (window.innerWidth <= 768) {
-                    container.classList.remove('mobile-menu-open');
-                }
+                
+                this.history = []; // Clear history on top-level sidebar navigation
+                this.navigateTo(targetId);
             });
         });
     },
 
-    navigateTo(viewId) {
+    navigateTo(viewId, isBack = false, skipHistory = false) {
+        // Track history if not navigating backwards
+        if (!isBack && !skipHistory && this.currentViewId && this.currentViewId !== viewId) {
+            this.history.push(this.currentViewId);
+        }
+        
+        this.currentViewId = viewId;
+
         // Update sidebar visual state
         document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
         const activeNav = document.querySelector(`.nav-item[data-target="${viewId}"]`);
@@ -85,6 +90,15 @@ const app = {
         const container = document.querySelector('.app-container');
         if (window.innerWidth <= 768) {
             container.classList.remove('mobile-menu-open');
+        }
+    },
+    
+    navigateBack() {
+        if (this.history.length > 0) {
+            const prevView = this.history.pop();
+            this.navigateTo(prevView, true);
+        } else {
+            this.navigateTo('view-wallet', true);
         }
     },
 
@@ -132,7 +146,7 @@ const app = {
         this.currentWizardStep = 1;
         this.updateWizardUI();
 
-        this.switchView('view-project-create');
+        this.navigateTo('view-project-create');
     },
 
     updateWizardUI() {
@@ -429,6 +443,11 @@ const app = {
         };
 
         this.projects.unshift(newProj);
+        
+        // Clean history so back button goes to Projects List
+        this.history = ['view-wallet'];
+        this.currentViewId = 'view-projects-list'; 
+        
         this.openProjectDetail(newProj.id);
     },
 
@@ -545,7 +564,7 @@ const app = {
             readyCard.style.display = 'none';
         }
 
-        this.switchView('view-project-detail');
+        this.navigateTo('view-project-detail');
     },
 
     // --- State Machine Automation & Payment Handling ---
@@ -566,7 +585,7 @@ const app = {
         
         document.getElementById('checkout-amount-input').value = m.amount;
         
-        this.switchView('view-checkout');
+        this.navigateTo('view-checkout');
     },
 
     processPayment() {
@@ -659,8 +678,10 @@ const app = {
         // Hide popup
         document.getElementById('paymentFeedbackModal').classList.add('hidden');
         
-        // Navigate to Transactions tab
-        this.navigateTo('view-transactions');
+        // Fix history so back button doesn't trap user in checkout
+        this.history = [];
+        this.currentViewId = 'view-wallet'; 
+        this.navigateTo('view-transactions', false, true); // true skips pushing the checkout view to history
         
         // Open the corresponding invoice
         if (this.pendingTxnId) {
