@@ -146,9 +146,10 @@
                                 <div class="progress-step" id="indicator-step-2">2. Order</div>
                                 <div class="progress-step" id="indicator-step-3">3. Milestones</div>
                                 <div class="progress-step" id="indicator-step-4">4. Penalty</div>
+                                <div class="progress-step" id="indicator-step-5">5. Review</div>
                             </div>
 
-                            <div style="padding: 32px;">
+                            <div style="padding: 32px;" class="wizard-padding-mobile">
                                 <form id="create-project-form" onsubmit="app.handleCreateProject(event)">
                                     
                                     <!-- STEP 1: CUSTOMER DETAILS -->
@@ -224,7 +225,7 @@
                                         </div>
                                     </div>
 
-                                    <!-- STEP 4: PENALTY (OPTIONAL) & SUBMIT -->
+                                    <!-- STEP 4: PENALTY (OPTIONAL) -->
                                     <div class="wizard-step" id="wizard-step-4">
                                         <h3 class="section-title mt-0">Penalty Fee <span class="text-muted text-sm" style="font-weight: normal;">(Optional)</span></h3>
                                         <p class="text-muted text-sm mb-24">Define rules for late payments or delayed pickups. Leave blank if not applicable.</p>
@@ -244,6 +245,36 @@
                                         </div>
                                         <div class="form-actions mt-40" style="justify-content: space-between;">
                                             <button type="button" class="btn-secondary full-width-mobile mb-16" onclick="app.prevWizardStep(4)">&larr; Back</button>
+                                            <button type="button" class="btn-primary full-width-mobile" onclick="app.nextWizardStep(4)">Review Project &rarr;</button>
+                                        </div>
+                                    </div>
+
+                                    <!-- STEP 5: REVIEW & CREATE -->
+                                    <div class="wizard-step" id="wizard-step-5">
+                                        <h3 class="section-title mt-0">Review & Create</h3>
+                                        <p class="text-muted text-sm mb-24">Please verify all information before launching this project.</p>
+                                        
+                                        <div class="review-grid">
+                                            <div class="review-block card bg-success-light mb-16" style="padding: 16px;">
+                                                <h4 style="margin-bottom: 8px; font-size: 14px;">Customer Details</h4>
+                                                <p id="rev-cust" class="text-sm" style="line-height: 1.6;"></p>
+                                            </div>
+                                            <div class="review-block card bg-success-light mb-16" style="padding: 16px;">
+                                                <h4 style="margin-bottom: 8px; font-size: 14px;">Order Details</h4>
+                                                <p id="rev-order" class="text-sm" style="line-height: 1.6;"></p>
+                                            </div>
+                                            <div class="review-block card bg-success-light mb-16" style="padding: 16px;">
+                                                <h4 style="margin-bottom: 8px; font-size: 14px;">Milestones</h4>
+                                                <p id="rev-milestones" class="text-sm" style="line-height: 1.6;"></p>
+                                            </div>
+                                            <div class="review-block card bg-success-light mb-24" style="padding: 16px;">
+                                                <h4 style="margin-bottom: 8px; font-size: 14px;">Penalty Policy</h4>
+                                                <p id="rev-penalty" class="text-sm" style="line-height: 1.6;"></p>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-actions mt-40" style="justify-content: space-between;">
+                                            <button type="button" class="btn-secondary full-width-mobile mb-16" onclick="app.prevWizardStep(5)">&larr; Back</button>
                                             <button type="submit" class="btn-primary full-width-mobile bg-success" id="btn-save-project">Create Project</button>
                                         </div>
                                     </div>

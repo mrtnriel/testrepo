@@ -12,7 +12,7 @@ const app = {
     
     // Wizard State
     currentWizardStep: 1,
-    totalWizardSteps: 4,
+    totalWizardSteps: 5,
 
     // Status Enums
     STATUS: {
@@ -130,6 +130,8 @@ const app = {
                 indicator.classList.add('completed');
             } else if (i === this.currentWizardStep) {
                 indicator.classList.add('active');
+                // Ensure the progress bar scrolls to show the active step on mobile
+                indicator.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
             }
         }
         
@@ -139,6 +141,11 @@ const app = {
         // Trigger milestone generation safely when arriving at step 3
         if (this.currentWizardStep === 3) {
             this.generateMilestones();
+        }
+
+        // Trigger data population when arriving at the final Review step
+        if (this.currentWizardStep === 5) {
+            this.populateReviewStep();
         }
     },
 
@@ -205,6 +212,51 @@ const app = {
         }
 
         document.getElementById('milestone-allocated').innerText = `₱${this.formatMoney(total)}`;
+    },
+
+    populateReviewStep() {
+        // Customer Info
+        const custName = document.getElementById('custName').value;
+        const custMobile = document.getElementById('custMobile').value;
+        const custEmail = document.getElementById('custEmail').value || 'Not provided';
+        
+        document.getElementById('rev-cust').innerHTML = `
+            <strong>Name:</strong> ${custName} <br>
+            <strong>Mobile:</strong> ${custMobile} <br>
+            <strong>Email:</strong> ${custEmail}
+        `;
+
+        // Order Info
+        const projName = document.getElementById('projName').value;
+        const projTotal = document.getElementById('projTotal').value;
+        const projDate = document.getElementById('projDate').value;
+        
+        document.getElementById('rev-order').innerHTML = `
+            <strong>Project:</strong> ${projName} <br>
+            <strong>Total Amount:</strong> ₱${this.formatMoney(projTotal)} <br>
+            <strong>Target Date:</strong> ${projDate}
+        `;
+
+        // Milestone Info
+        const milestonesCount = document.getElementById('projMilestoneCount').value;
+        document.getElementById('rev-milestones').innerHTML = `
+            Project value split evenly across <strong>${milestonesCount} payment milestones.</strong>
+        `;
+
+        // Penalty Info
+        const penaltyAmt = document.getElementById('projPenaltyAmt').value;
+        const penaltyWhen = document.getElementById('projPenaltyWhen').value;
+        const penaltyReason = document.getElementById('projPenaltyReason').value;
+
+        if (penaltyAmt && parseFloat(penaltyAmt) > 0) {
+            document.getElementById('rev-penalty').innerHTML = `
+                <strong>Amount:</strong> ₱${this.formatMoney(penaltyAmt)} <br>
+                <strong>Trigger:</strong> ${penaltyWhen || 'Not specified'} <br>
+                <strong>Reason:</strong> ${penaltyReason || 'Not specified'}
+            `;
+        } else {
+            document.getElementById('rev-penalty').innerHTML = `<em>No penalty fee configured.</em>`;
+        }
     },
 
     handleCreateProject(e) {
