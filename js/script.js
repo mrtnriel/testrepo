@@ -266,6 +266,45 @@ const app = {
         // Final sanity check
         if (!this.validateCurrentStep()) return;
 
+        const btn = document.getElementById('btn-save-project');
+        
+        // Prevent duplicate submissions if already animating
+        if (btn.classList.contains('is-loading') || btn.classList.contains('is-success')) return;
+
+        // Start loading animation
+        btn.classList.add('is-loading');
+        btn.disabled = true;
+
+        // Simulate Network Request / Processing time (1.5 seconds)
+        setTimeout(() => {
+            const isSuccess = true; // Hardcoded to simulate a successful API response
+
+            if (isSuccess) {
+                // Transition to success state (green checkmark)
+                btn.classList.remove('is-loading');
+                btn.classList.add('is-success');
+
+                // Leave success state visible briefly, then execute the finalization logic
+                setTimeout(() => {
+                    this.finalizeProjectCreation();
+                    
+                    // Reset button silently after view has changed so it's ready for the next time
+                    setTimeout(() => {
+                        btn.classList.remove('is-success');
+                        btn.disabled = false;
+                    }, 300);
+                }, 1000); 
+
+            } else {
+                // Example of failure handling
+                btn.classList.remove('is-loading');
+                btn.disabled = false;
+                alert('Project creation failed. Please try again.');
+            }
+        }, 1500); 
+    },
+
+    finalizeProjectCreation() {
         const mNames = document.querySelectorAll('.m-name');
         const mAmts = document.querySelectorAll('.m-amt');
         const milestones = [];
