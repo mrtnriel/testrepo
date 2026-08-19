@@ -234,7 +234,7 @@ const app = {
         document.getElementById('rev-order').innerHTML = `
             <strong>Project:</strong> ${projName} <br>
             <strong>Total Amount:</strong> ₱${this.formatMoney(projTotal)} <br>
-            <strong>Target Date:</strong> ${projDate}
+            <strong>Target Date:</strong> ${projDate ? new Date(projDate).toLocaleDateString() : ''}
         `;
 
         // Milestone Info
@@ -249,9 +249,10 @@ const app = {
         const penaltyReason = document.getElementById('projPenaltyReason').value;
 
         if (penaltyAmt && parseFloat(penaltyAmt) > 0) {
+            const formattedPenaltyWhen = penaltyWhen ? new Date(penaltyWhen).toLocaleDateString() : 'Not specified';
             document.getElementById('rev-penalty').innerHTML = `
                 <strong>Amount:</strong> ₱${this.formatMoney(penaltyAmt)} <br>
-                <strong>Trigger:</strong> ${penaltyWhen || 'Not specified'} <br>
+                <strong>Trigger Date:</strong> ${formattedPenaltyWhen} <br>
                 <strong>Reason:</strong> ${penaltyReason || 'Not specified'}
             `;
         } else {
