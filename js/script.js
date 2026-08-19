@@ -59,17 +59,25 @@ const app = {
                 e.preventDefault();
                 const targetId = item.getAttribute('data-target');
                 if (!targetId) return;
-
-                document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
-                item.classList.add('active');
-                this.switchView(targetId);
-
-                // Close mobile menu after navigating
-                if (window.innerWidth <= 768) {
-                    container.classList.remove('mobile-menu-open');
-                }
+                this.navigateTo(targetId);
             });
         });
+    },
+
+    navigateTo(viewId) {
+        // Update sidebar visual state
+        document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+        const activeNav = document.querySelector(`.nav-item[data-target="${viewId}"]`);
+        if(activeNav) activeNav.classList.add('active');
+        
+        // Switch the view
+        this.switchView(viewId);
+
+        // Close mobile menu after navigating
+        const container = document.querySelector('.app-container');
+        if (window.innerWidth <= 768) {
+            container.classList.remove('mobile-menu-open');
+        }
     },
 
     switchView(viewId) {
@@ -644,10 +652,7 @@ const app = {
         document.getElementById('paymentFeedbackModal').classList.add('hidden');
         
         // Navigate to Transactions tab
-        document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
-        document.querySelector('[data-target="view-transactions"]').classList.add('active');
-        
-        this.switchView('view-transactions');
+        this.navigateTo('view-transactions');
         
         // Open the corresponding invoice
         if (this.pendingTxnId) {

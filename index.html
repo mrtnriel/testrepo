@@ -82,6 +82,10 @@
                                 <div class="balance-amount"><span class="currency">₱</span> <span id="dash-collected">0.00</span></div>
                             </div>
                             <div class="balance-actions">
+                                <button class="btn-secondary full-width-mobile" onclick="app.navigateTo('view-transactions')">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 6px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                                    Payment History
+                                </button>
                                 <button class="btn-primary full-width-mobile" onclick="app.showCreateProject()">
                                     <span class="btn-icon">+</span> Create New Project
                                 </button>
@@ -107,9 +111,15 @@
                             </div>
                             <div class="summary-column">
                                 <h3 class="summary-title color-blue">Active Projects</h3>
-                                <div class="card small-card">
+                                <!-- Interactive Mobile Card -->
+                                <div class="card small-card interactive-card" onclick="app.navigateTo('view-projects-list')" role="button" tabindex="0">
                                     <div class="small-card-label">In Progress</div>
-                                    <div class="small-card-amount"><span id="dash-active-count">0</span></div>
+                                    <div class="d-flex justify-between align-center">
+                                        <div class="small-card-amount"><span id="dash-active-count">0</span></div>
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--clr-primary-btn)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <polyline points="9 18 15 12 9 6"></polyline>
+                                        </svg>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -134,7 +144,7 @@
                 <!-- VIEW 3: CREATE PROJECT WIZARD -->
                 <div id="view-project-create" class="app-view hidden">
                     <section class="section-top">
-                        <button class="btn-secondary btn-sm mb-16" onclick="app.switchView('view-projects-list')">← Cancel & Back</button>
+                        <button class="btn-secondary btn-sm mb-16" onclick="app.navigateTo('view-projects-list')">← Cancel & Back</button>
                         <h1 class="page-title">Create New Project</h1>
                     </section>
                     <section class="section-bottom">
@@ -292,6 +302,7 @@
 
                                         <div class="form-actions wizard-actions mt-40">
                                             <button type="button" class="btn-secondary full-width-mobile" onclick="app.prevWizardStep(5)">&larr; Back</button>
+                                            <!-- Switched to type="button" to avoid mobile Safari HTML5 hidden field validation bugs -->
                                             <button type="button" class="btn-primary full-width-mobile bg-success" id="btn-save-project" onclick="app.handleCreateProject(event)">Create Project</button>
                                         </div>
                                     </div>
@@ -305,7 +316,7 @@
                 <!-- VIEW 4: PROJECT DETAIL -->
                 <div id="view-project-detail" class="app-view hidden">
                     <section class="section-top">
-                        <button class="btn-secondary mb-16" onclick="app.switchView('view-projects-list')">← Back to Projects</button>
+                        <button class="btn-secondary mb-16" onclick="app.navigateTo('view-projects-list')">← Back to Projects</button>
                         <div class="section-top-header">
                             <div style="width: 100%;">
                                 <!-- Restructured to group title and badge together on mobile -->
@@ -395,7 +406,7 @@
                             <div class="card checkout-payment">
                                 <h3 class="section-title">GCash Payment</h3>
                                 <div class="qr-placeholder">
-                                    <img src="assets/QR.jpg" alt="QR Code" onerror="this.style.display='none'">
+                                    <img src="assets/image_91aba7.jpg" alt="QR Code" onerror="this.style.display='none'">
                                 </div>
                                 <p class="qr-instructions">Scan to pay via GCash</p>
                                 
