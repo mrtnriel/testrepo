@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>G-Milestone Dashboard</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Top Header -->
+        <header class="header">
+            <div class="header-left">
+                <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle Navigation">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+                </button>
+                <div class="brand-logo">
+                    <span class="logo-circle">G</span>
+                    <span class="logo-text">)</span>
+                    <span class="logo-badge">MILESTONE</span>
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="user-profile">
+                    <div class="user-avatar">RM</div>
+                    <!-- Added hide-on-mobile to prevent header squishing and horizontal overflow -->
+                    <div class="user-info hide-on-mobile">
+                        <div class="user-name text-truncate">Rhea Mae Narag</div>
+                        <div class="user-email text-truncate">rheamaespnarag@gmail.com</div>
+                    </div>
+                    <svg class="dropdown-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+                </div>
+            </div>
+        </header>
+
+        <div class="layout-body">
+            <!-- Sidebar Navigation -->
+            <aside class="sidebar" id="sidebar">
+                <nav class="nav-menu">
+                    <a href="#" class="nav-item active" data-target="view-wallet">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M21 12H17"/><path d="M17 12a2 2 0 0 1-2-2 2 2 0 0 1 2-2"/></svg>
+                        <span class="nav-text">Dashboard</span>
+                    </a>
+                    <a href="#" class="nav-item" data-target="view-projects-list">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+                        <span class="nav-text">Projects</span>
+                    </a>
+                    <a href="#" class="nav-item" data-target="view-transactions">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                        <span class="nav-text">Payment History</span>
+                    </a>
+                </nav>
+                <button class="collapse-btn" id="collapseBtn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+                    <span class="nav-text">COLLAPSE</span>
+                </button>
+            </aside>
+            
+            <!-- Mobile Sidebar Backdrop -->
+            <div id="mobileBackdrop" class="sidebar-backdrop"></div>
+
+            <!-- Main Content Area -->
+            <main class="main-content">
+                
+                <!-- VIEW 1: DASHBOARD / WALLET SUMMARY -->
+                <div id="view-wallet" class="app-view active">
+                    <section class="section-top">
+                        <div class="section-top-header">
+                            <h1 class="page-title">Business Overview</h1>
+                            <div class="wallet-details">
+                                <span class="wallet-number">GCash Business Account</span>
+                                <span class="wallet-time">Live Update</span>
+                            </div>
+                        </div>
+
+                        <div class="card balance-card">
+                            <div class="balance-info">
+                                <div class="balance-label">
+                                    Total Collected Payments
+                                </div>
+                                <div class="balance-amount"><span class="currency">₱</span> <span id="dash-collected">0.00</span></div>
+                            </div>
+                            <div class="balance-actions">
+                                <button class="btn-primary full-width-mobile" onclick="app.showCreateProject()">
+                                    <span class="btn-icon">+</span> Create New Project
+                                </button>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="section-bottom">
+                        <div class="summary-grid">
+                            <div class="summary-column">
+                                <h3 class="summary-title color-main">Total Project Value</h3>
+                                <div class="card small-card">
+                                    <div class="small-card-label">Active & Completed</div>
+                                    <div class="small-card-amount"><span class="currency">₱</span> <span id="dash-total-value">0.00</span></div>
+                                </div>
+                            </div>
+                            <div class="summary-column">
+                                <h3 class="summary-title color-orange">Outstanding Balance</h3>
+                                <div class="card small-card">
+                                    <div class="small-card-label">Pending Collection</div>
+                                    <div class="small-card-amount"><span class="currency">₱</span> <span id="dash-outstanding">0.00</span></div>
+                                </div>
+                            </div>
+                            <div class="summary-column">
+                                <h3 class="summary-title color-blue">Active Projects</h3>
+                                <div class="card small-card">
+                                    <div class="small-card-label">In Progress</div>
+                                    <div class="small-card-amount"><span id="dash-active-count">0</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- VIEW 2: PROJECTS LIST -->
+                <div id="view-projects-list" class="app-view hidden">
+                    <section class="section-top">
+                        <div class="section-top-header" style="margin-bottom: 0;">
+                            <h1 class="page-title">Projects</h1>
+                            <button class="btn-primary full-width-mobile" onclick="app.showCreateProject()">+ New Project</button>
+                        </div>
+                    </section>
+                    <section class="section-bottom">
+                        <div id="projects-grid" class="projects-grid">
+                            <!-- Projects Injected via JS -->
+                        </div>
+                    </section>
+                </div>
+
+                <!-- VIEW 3: CREATE PROJECT -->
+                <div id="view-project-create" class="app-view hidden">
+                    <section class="section-top">
+                        <h1 class="page-title">Create New Project</h1>
+                    </section>
+                    <section class="section-bottom">
+                        <div class="card" style="max-width: 800px; margin: 0 auto;">
+                            <form id="create-project-form" onsubmit="app.handleCreateProject(event)">
+                                
+                                <h3 class="section-title">Customer Details</h3>
+                                <div class="form-grid">
+                                    <div class="form-group">
+                                        <label>Customer Name</label>
+                                        <input type="text" id="custName" class="form-control" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Mobile Number</label>
+                                        <input type="tel" id="custMobile" class="form-control" required>
+                                    </div>
+                                    <div class="form-group form-span-full">
+                                        <label>Email Address</label>
+                                        <input type="email" id="custEmail" class="form-control">
+                                    </div>
+                                </div>
+
+                                <h3 class="section-title mt-32">Order Details</h3>
+                                <div class="form-grid">
+                                    <div class="form-group form-span-full">
+                                        <label>Project / Order Name</label>
+                                        <input type="text" id="projName" class="form-control" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Total Amount (₱)</label>
+                                        <input type="number" id="projTotal" class="form-control" min="1" step="0.01" required onchange="app.validateMilestones()">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Expected Completion</label>
+                                        <input type="date" id="projDate" class="form-control" required>
+                                    </div>
+                                </div>
+
+                                <h3 class="section-title mt-32 d-flex justify-between align-center flex-wrap">
+                                    <span>Payment Milestones</span>
+                                    <button type="button" class="btn-secondary btn-sm" onclick="app.addMilestoneRow()">+ Add Milestone</button>
+                                </h3>
+                                <div id="milestones-container" class="milestones-editor">
+                                    <!-- Dynamic rows -->
+                                </div>
+                                <div class="milestone-summary">
+                                    <span>Total Allocated: <strong id="milestone-allocated">₱0.00</strong></span>
+                                    <div id="milestone-warning" class="color-orange warning-text" style="display:none;">Amounts must equal Total Project Amount.</div>
+                                </div>
+
+                                <h3 class="section-title mt-32">Penalty Fee (Optional)</h3>
+                                <div class="form-grid">
+                                    <div class="form-group">
+                                        <label>Penalty Amount (₱)</label>
+                                        <input type="number" id="projPenaltyAmt" class="form-control" min="0" step="0.01" placeholder="e.g. 500">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>When to Charge</label>
+                                        <input type="text" id="projPenaltyWhen" class="form-control" placeholder="e.g. 3 days after due date">
+                                    </div>
+                                    <div class="form-group form-span-full">
+                                        <label>Condition / Reason</label>
+                                        <input type="text" id="projPenaltyReason" class="form-control" placeholder="e.g. Late pickup or payment delay">
+                                    </div>
+                                </div>
+
+                                <div class="form-actions mt-40">
+                                    <button type="button" class="btn-secondary full-width-mobile" onclick="app.switchView('view-projects-list')">Cancel</button>
+                                    <button type="submit" class="btn-primary full-width-mobile" id="btn-save-project">Create Project</button>
+                                </div>
+                            </form>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- VIEW 4: PROJECT DETAIL -->
+                <div id="view-project-detail" class="app-view hidden">
+                    <section class="section-top">
+                        <button class="btn-secondary" style="margin-bottom: 16px;" onclick="app.switchView('view-projects-list')">← Back to Projects</button>
+                        <div class="section-top-header">
+                            <div>
+                                <h1 class="page-title text-truncate" id="det-name">Project Name</h1>
+                                <p class="text-muted mt-8">Customer: <strong id="det-customer">Name</strong> | <span id="det-mobile">Mobile</span></p>
+                            </div>
+                            <div id="det-status-badge" class="status-badge">STATUS</div>
+                        </div>
+                    </section>
+                    <section class="section-bottom">
+                        <div class="detail-grid">
+                            <!-- Left: Progress & Milestones -->
+                            <div class="detail-main">
+                                <div class="card mb-24">
+                                    <h3 class="section-title">Payment Progress</h3>
+                                    <div class="progress-stats">
+                                        <div class="stat-box">
+                                            <span class="stat-label">Total Value</span>
+                                            <span class="stat-val" id="det-total">₱0.00</span>
+                                        </div>
+                                        <div class="stat-box">
+                                            <span class="stat-label">Paid</span>
+                                            <span class="stat-val color-main" id="det-paid">₱0.00</span>
+                                        </div>
+                                        <div class="stat-box">
+                                            <span class="stat-label">Remaining</span>
+                                            <span class="stat-val color-orange" id="det-remaining">₱0.00</span>
+                                        </div>
+                                    </div>
+                                    <div class="progress-bar-container mt-16">
+                                        <div class="progress-bar-fill" id="det-progress-fill" style="width: 0%;"></div>
+                                    </div>
+                                    <div class="progress-text-right" id="det-progress-text">0% PAID</div>
+                                </div>
+
+                                <div class="card">
+                                    <div class="d-flex justify-between align-center mb-20 flex-wrap">
+                                        <h3 class="section-title m-0">Payment Milestones</h3>
+                                    </div>
+                                    <div class="timeline" id="det-milestones">
+                                        <!-- Injected via JS -->
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Right: Actions & Details -->
+                            <div class="detail-sidebar">
+                                <div class="card bg-success-light mb-24" id="ready-action-card">
+                                    <h3 class="section-title">Order Preparation</h3>
+                                    <p class="text-muted text-sm mb-16">Once the work is done, mark the order as ready. This automatically triggers the final payment request to the customer.</p>
+                                    <button class="btn-primary full-width bg-success" onclick="app.markOrderReady()">Mark Order Ready</button>
+                                </div>
+
+                                <div class="card">
+                                    <h3 class="section-title">Project Details</h3>
+                                    <ul class="info-list">
+                                        <li><strong>ID:</strong> <span id="det-id" class="text-truncate" style="max-width: 60%; text-align: right;"></span></li>
+                                        <li><strong>Expected:</strong> <span id="det-date"></span></li>
+                                        <li><strong>Status:</strong> <span id="det-status-text"></span></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- VIEW 5: CUSTOMER CHECKOUT -->
+                <div id="view-checkout" class="app-view hidden">
+                    <section class="section-top">
+                        <button class="btn-secondary" style="margin-bottom: 16px;" onclick="app.openProjectDetail(app.currentProjectViewId)">← Cancel Payment</button>
+                        <h1 class="page-title">Make a Payment</h1>
+                    </section>
+                    <section class="section-bottom">
+                        <div class="checkout-grid">
+                            <div class="card checkout-receipt">
+                                <h3 class="section-title">Milestone Summary</h3>
+                                <div id="checkout-breakdown" class="receipt-list mb-24"></div>
+                                
+                                <div class="form-group">
+                                    <label>Amount to Pay (Partial Payments Allowed)</label>
+                                    <input type="number" id="checkout-amount-input" class="form-control amount-input-large" step="0.01" min="1">
+                                </div>
+                            </div>
+                            
+                            <div class="card checkout-payment">
+                                <h3 class="section-title">GCash Payment</h3>
+                                <div class="qr-placeholder">
+                                    <img src="assets/image_91aba7.jpg" alt="QR Code" onerror="this.style.display='none'">
+                                </div>
+                                <p class="qr-instructions">Scan to pay via GCash</p>
+                                
+                                <div class="payment-buttons">
+                                    <button class="btn-primary full-width" onclick="app.processPayment()">Authorize & Pay</button>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- VIEW 6: TRANSACTIONS LEDGER -->
+                <div id="view-transactions" class="app-view hidden">
+                    <section class="section-top">
+                        <h1 class="page-title">Payment Ledger</h1>
+                    </section>
+                    <section class="section-bottom">
+                        <div class="card">
+                            <div id="ledger-list" class="ledger-list"></div>
+                        </div>
+                    </section>
+                </div>
+
+            </main>
+        </div>
+    </div>
+
+    <!-- Invoice Modal Overlay -->
+    <div id="invoiceModal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="section-title m-0">Payment Receipt</h2>
+                <button class="btn-close" onclick="app.closeInvoiceModal()" aria-label="Close modal">&times;</button>
+            </div>
+            <div class="modal-body" id="invoiceBody">
+                <!-- Invoice details injected via JS -->
+            </div>
+            <div class="modal-footer form-actions mt-0">
+                <button class="btn-secondary full-width-mobile" onclick="app.closeInvoiceModal()">Close</button>
+                <button class="btn-primary full-width-mobile" onclick="window.print()">Download PDF</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/script.js"></script>
+</body>
+</html>
