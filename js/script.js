@@ -508,11 +508,11 @@ const app = {
             tl.innerHTML += `
                 <div class="timeline-item ${stateClass}">
                     <div class="tl-content">
-                        <div>
-                            <div class="tl-title">${m.name}</div>
+                        <div class="tl-info">
+                            <div class="tl-title text-truncate">${m.name}</div>
                             <div class="tl-meta">${metaText}</div>
                         </div>
-                        <div class="d-flex" style="flex-direction: column; align-items: flex-end;">
+                        <div class="tl-action-group">
                             <div class="tl-amount">₱${this.formatMoney(m.amount)}</div>
                             <div class="tl-actions">${actionsHtml}</div>
                         </div>
