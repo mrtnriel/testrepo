@@ -59,7 +59,15 @@ const app = {
                 e.preventDefault();
                 const targetId = item.getAttribute('data-target');
                 if (!targetId) return;
-                this.navigateTo(targetId);
+
+                document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+                item.classList.add('active');
+                this.switchView(targetId);
+
+                // Close mobile menu after navigating
+                if (window.innerWidth <= 768) {
+                    container.classList.remove('mobile-menu-open');
+                }
             });
         });
     },

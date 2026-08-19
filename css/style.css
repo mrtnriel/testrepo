@@ -322,19 +322,16 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 
 @media (max-width: 768px) {
-    /* Header adjustments to prevent horizontal overflow */
-    .header { padding: 0 16px; }
-    .header-left, .header-right { gap: 8px; }
-    .hide-on-mobile { display: none !important; }
-    .mobile-menu-btn { display: block; }
+    /* Header completely hidden to maximize vertical space */
+    .header { display: none !important; }
     
     /* Sidebar toggling */
     .sidebar { position: absolute; left: -100%; top: 0; bottom: 0; z-index: 20; }
     .app-container.mobile-menu-open .sidebar { left: 0; transform: translateX(0); }
     .collapse-btn { display: none; }
     
-    /* Drastically reduced vertical padding to minimize scrolling on the dashboard and headers */
-    .section-top { padding: 12px 16px 8px 16px; }
+    /* Drastically reduced vertical padding to minimize scrolling on the dashboard */
+    .section-top { padding: 16px 16px 8px 16px; }
     .section-bottom { padding: 8px 16px 24px 16px; }
     
     /* Scaled down typography for mobile */
