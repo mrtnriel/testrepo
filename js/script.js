@@ -161,6 +161,20 @@ const app = {
                 isValid = false;
             }
         });
+
+        // Special validation for Step 3: ensure custom allocation matches total
+        if (this.currentWizardStep === 3) {
+            const totalInput = parseFloat(document.getElementById('projTotal').value) || 0;
+            const amtInputs = document.querySelectorAll('.m-amt');
+            let currentSum = 0;
+            amtInputs.forEach(inp => { currentSum += (parseFloat(inp.value) || 0); });
+            
+            if (Math.abs(currentSum - totalInput) > 0.02 && totalInput > 0) {
+                document.getElementById('milestone-warning').style.display = 'block';
+                isValid = false;
+            }
+        }
+
         return isValid;
     },
 
@@ -186,33 +200,77 @@ const app = {
         }
     },
 
-    // Auto-calculate equal milestones
     generateMilestones() {
         const total = parseFloat(document.getElementById('projTotal').value) || 0;
         let count = parseInt(document.getElementById('projMilestoneCount').value) || 1;
-        if (count < 1) count = 1; // Safeguard
+        if (count < 1) count = 1;
+
+        const type = document.getElementById('projMilestoneType').value || 'equal';
+        const isReadonly = type === 'equal' ? 'readonly tabindex="-1"' : '';
 
         const container = document.getElementById('milestones-container');
         container.innerHTML = '';
         
         const splitAmount = total / count;
+        let today = new Date().toISOString().split('T')[0];
+        let expDate = document.getElementById('projDate').value || '';
         
         for (let i = 1; i <= count; i++) {
             let defaultName = `Milestone ${i}`;
-            if (count === 1) defaultName = "Full Payment";
-            else if (i === 1) defaultName = "Downpayment";
-            else if (i === count) defaultName = "Final Payment";
+            let defaultDate = '';
+
+            if (count === 1) {
+                defaultName = "Full Payment";
+                defaultDate = today;
+            } else if (i === 1) {
+                defaultName = "Downpayment";
+                defaultDate = today;
+            } else if (i === count) {
+                defaultName = "Final Payment";
+                defaultDate = expDate;
+            }
 
             const row = document.createElement('div');
             row.className = 'milestone-row';
             row.innerHTML = `
-                <input type="text" class="form-control m-name" placeholder="Milestone Name" value="${defaultName}" required>
-                <input type="number" class="form-control m-amt" placeholder="Amount ₱" value="${splitAmount.toFixed(2)}" step="0.01" min="1" required readonly tabindex="-1">
+                <div style="flex: 1; min-width: 120px;">
+                    <label style="font-size:11px; color:var(--clr-text-muted);">Name</label>
+                    <input type="text" class="form-control m-name" placeholder="Milestone Name" value="${defaultName}" required>
+                </div>
+                <div style="flex: 1; min-width: 120px;">
+                    <label style="font-size:11px; color:var(--clr-text-muted);">Amount (₱)</label>
+                    <input type="number" class="form-control m-amt" placeholder="Amount" value="${splitAmount.toFixed(2)}" step="0.01" min="1" required ${isReadonly} oninput="app.validateMilestonesSum()">
+                </div>
+                <div style="flex: 1; min-width: 130px;">
+                    <label style="font-size:11px; color:var(--clr-text-muted);">Due Date</label>
+                    <input type="date" class="form-control m-date" value="${defaultDate}" min="${today}" ${expDate ? `max="${expDate}"` : ''} required>
+                </div>
             `;
             container.appendChild(row);
         }
 
-        document.getElementById('milestone-allocated').innerText = `₱${this.formatMoney(total)}`;
+        document.getElementById('milestone-total-target').innerText = `₱${this.formatMoney(total)}`;
+        this.validateMilestonesSum();
+    },
+
+    validateMilestonesSum() {
+        const totalInput = parseFloat(document.getElementById('projTotal').value) || 0;
+        const amtInputs = document.querySelectorAll('.m-amt');
+        let currentSum = 0;
+        
+        amtInputs.forEach(inp => { currentSum += (parseFloat(inp.value) || 0); });
+        
+        document.getElementById('milestone-allocated').innerText = `₱${this.formatMoney(currentSum)}`;
+        const warning = document.getElementById('milestone-warning');
+        const btnNext = document.getElementById('btn-next-step-3');
+
+        if (Math.abs(currentSum - totalInput) > 0.02 && totalInput > 0) {
+            warning.style.display = 'block';
+            if (btnNext) btnNext.disabled = true;
+        } else {
+            warning.style.display = 'none';
+            if (btnNext) btnNext.disabled = false;
+        }
     },
 
     populateReviewStep() {
@@ -239,22 +297,29 @@ const app = {
         `;
 
         // Milestone Info
-        const milestonesCount = document.getElementById('projMilestoneCount').value;
-        document.getElementById('rev-milestones').innerHTML = `
-            Project value split evenly across <strong>${milestonesCount} payment milestones.</strong>
-        `;
+        const mNames = document.querySelectorAll('.m-name');
+        const mAmts = document.querySelectorAll('.m-amt');
+        const mDates = document.querySelectorAll('.m-date');
+        
+        let msHtml = `<ul style="margin:0; padding-left: 16px; margin-top: 8px;">`;
+        for (let i = 0; i < mNames.length; i++) {
+            let d = mDates[i].value ? new Date(mDates[i].value).toLocaleDateString() : 'TBD';
+            msHtml += `<li style="margin-bottom: 4px;"><strong>${mNames[i].value}:</strong> ₱${this.formatMoney(mAmts[i].value)} <span class="text-muted">(${d})</span></li>`;
+        }
+        msHtml += `</ul>`;
+
+        document.getElementById('rev-milestones').innerHTML = msHtml;
 
         // Penalty Info
-        const penaltyAmt = document.getElementById('projPenaltyAmt').value;
+        const penaltyType = document.getElementById('projPenaltyType').value;
+        const penaltyVal = document.getElementById('projPenaltyValue').value;
         const penaltyWhen = document.getElementById('projPenaltyWhen').value;
-        const penaltyReason = document.getElementById('projPenaltyReason').value;
-
-        if (penaltyAmt && parseFloat(penaltyAmt) > 0) {
-            const formattedPenaltyWhen = penaltyWhen ? new Date(penaltyWhen).toLocaleDateString() : 'Not specified';
+        
+        if (penaltyVal && parseFloat(penaltyVal) > 0) {
+            let pAmtStr = penaltyType === 'percent' ? `${penaltyVal}% of remaining balance` : `₱${this.formatMoney(penaltyVal)}`;
             document.getElementById('rev-penalty').innerHTML = `
-                <strong>Amount:</strong> ₱${this.formatMoney(penaltyAmt)} <br>
-                <strong>Trigger Date:</strong> ${formattedPenaltyWhen} <br>
-                <strong>Reason:</strong> ${penaltyReason || 'Not specified'}
+                <strong>Penalty:</strong> ${pAmtStr} <br>
+                <strong>Trigger:</strong> ${penaltyWhen || 'Not specified'}
             `;
         } else {
             document.getElementById('rev-penalty').innerHTML = `<em>No penalty fee configured.</em>`;
@@ -308,21 +373,23 @@ const app = {
     finalizeProjectCreation() {
         const mNames = document.querySelectorAll('.m-name');
         const mAmts = document.querySelectorAll('.m-amt');
+        const mDates = document.querySelectorAll('.m-date');
         const milestones = [];
         
         for (let i = 0; i < mNames.length; i++) {
             milestones.push({
                 name: mNames[i].value,
                 amount: parseFloat(mAmts[i].value),
+                date: mDates[i].value,
                 requested: false,
                 paid: false,
                 paidDate: null
             });
         }
 
-        const penaltyAmt = parseFloat(document.getElementById('projPenaltyAmt').value) || 0;
+        const penaltyType = document.getElementById('projPenaltyType').value;
+        const penaltyVal = parseFloat(document.getElementById('projPenaltyValue').value) || 0;
         const penaltyWhen = document.getElementById('projPenaltyWhen').value;
-        const penaltyReason = document.getElementById('projPenaltyReason').value;
 
         const newProj = {
             id: 'PRJ-' + Math.random().toString(36).substring(2, 8).toUpperCase(),
@@ -337,9 +404,9 @@ const app = {
             status: 'DRAFT',
             milestones: milestones,
             penalty: {
-                amount: penaltyAmt,
-                when: penaltyWhen,
-                reason: penaltyReason
+                type: penaltyType,
+                amount: penaltyVal,
+                when: penaltyWhen
             },
             createdAt: new Date().toISOString()
         };
@@ -403,7 +470,7 @@ const app = {
 
         // Sidebar info
         document.getElementById('det-id').innerText = p.id;
-        document.getElementById('det-date').innerText = new Date(p.expectedDate).toLocaleDateString();
+        document.getElementById('det-date').innerText = p.expectedDate ? new Date(p.expectedDate).toLocaleDateString() : 'N/A';
         document.getElementById('det-status-text').innerText = statusObj.text;
 
         // Calculations
@@ -423,15 +490,15 @@ const app = {
         
         p.milestones.forEach((m, idx) => {
             let stateClass = '';
-            let metaText = 'Pending Request';
+            let metaText = m.date ? new Date(m.date).toLocaleDateString() : 'TBD';
             let actionsHtml = '';
 
             if (m.paid) {
                 stateClass = 'paid';
-                metaText = `Paid on ${new Date(m.paidDate).toLocaleDateString()}`;
+                metaText += ` • Paid on ${new Date(m.paidDate).toLocaleDateString()}`;
             } else if (m.requested) {
                 stateClass = 'active';
-                metaText = 'Payment Requested';
+                metaText += ' • Payment Requested';
                 actionsHtml = `<button class="btn-primary btn-sm" onclick="app.openCheckout('${p.id}', ${idx})">Simulate GCash Pay</button>`;
             } else {
                 actionsHtml = `<button class="btn-outline btn-sm" onclick="app.sendPaymentRequest('${p.id}', ${idx})">Send Request</button>`;
@@ -679,8 +746,8 @@ const app = {
                 status: "IN_PROGRESS",
                 createdAt: new Date().toISOString(),
                 milestones: [
-                    { name: "50% Downpayment", amount: 12500, requested: true, paid: true, paidDate: new Date(Date.now() - 86400000).toISOString() },
-                    { name: "50% Upon Delivery", amount: 12500, requested: false, paid: false, paidDate: null }
+                    { name: "50% Downpayment", amount: 12500, date: new Date().toISOString(), requested: true, paid: true, paidDate: new Date(Date.now() - 86400000).toISOString() },
+                    { name: "50% Upon Delivery", amount: 12500, date: "2026-09-15", requested: false, paid: false, paidDate: null }
                 ]
             },
             {
@@ -692,9 +759,9 @@ const app = {
                 status: "PAYMENT_REQUESTED",
                 createdAt: new Date().toISOString(),
                 milestones: [
-                    { name: "Reservation Fee", amount: 10000, requested: true, paid: false, paidDate: null },
-                    { name: "Progress Payment", amount: 20000, requested: false, paid: false, paidDate: null },
-                    { name: "Final Balance", amount: 20000, requested: false, paid: false, paidDate: null }
+                    { name: "Reservation Fee", amount: 10000, date: new Date().toISOString(), requested: true, paid: false, paidDate: null },
+                    { name: "Progress Payment", amount: 20000, date: "2026-09-20", requested: false, paid: false, paidDate: null },
+                    { name: "Final Balance", amount: 20000, date: "2026-10-10", requested: false, paid: false, paidDate: null }
                 ]
             }
         ];

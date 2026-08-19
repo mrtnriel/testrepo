@@ -20,16 +20,16 @@
                 </button>
                 <div class="brand-logo">
                     <span class="logo-circle">G</span>
-                    <span class="logo-text">)</span>
-                    <span class="logo-badge">MILESTONE</span>
+                    <span class="logo-text"></span>
+                    <span class="logo-badge">BETA</span>
                 </div>
             </div>
             <div class="header-right">
                 <div class="user-profile">
-                    <div class="user-avatar">RM</div>
+                    <div class="user-avatar">JS</div>
                     <div class="user-info hide-on-mobile">
-                        <div class="user-name text-truncate">Rhea Mae Narag</div>
-                        <div class="user-email text-truncate">rheamaespnarag@gmail.com</div>
+                        <div class="user-name text-truncate">John Smith</div>
+                        <div class="user-email text-truncate">johnsmith69@gmail.com</div>
                     </div>
                     <svg class="dropdown-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
                 </div>
@@ -191,7 +191,7 @@
                                             </div>
                                             <div class="form-group">
                                                 <label>Expected Completion *</label>
-                                                <input type="date" id="projDate" class="form-control" required>
+                                                <input type="date" id="projDate" class="form-control" required onchange="app.generateMilestones()">
                                             </div>
                                         </div>
                                         <div class="form-actions wizard-actions mt-40">
@@ -203,9 +203,16 @@
                                     <!-- STEP 3: PAYMENT MILESTONES -->
                                     <div class="wizard-step" id="wizard-step-3">
                                         <h3 class="section-title mt-0">Payment Milestones</h3>
-                                        <p class="text-muted text-sm mb-24">Specify how many payments this project will be split into. The system will automatically calculate equal payments.</p>
+                                        <p class="text-muted text-sm mb-24">Set up a payment schedule. You can split payments equally or assign custom amounts, ensuring they total the project amount.</p>
                                         
                                         <div class="form-grid mb-24">
+                                            <div class="form-group">
+                                                <label>Distribution Type</label>
+                                                <select id="projMilestoneType" class="form-control" onchange="app.generateMilestones()">
+                                                    <option value="equal">Equally Divided</option>
+                                                    <option value="custom">Custom Amounts</option>
+                                                </select>
+                                            </div>
                                             <div class="form-group">
                                                 <label>Number of Milestones *</label>
                                                 <input type="number" id="projMilestoneCount" class="form-control" min="1" max="12" value="2" required onchange="app.generateMilestones()">
@@ -213,16 +220,17 @@
                                         </div>
 
                                         <div id="milestones-container" class="milestones-editor">
-                                            <!-- Dynamically generated rows based on equal split -->
+                                            <!-- Dynamically generated rows -->
                                         </div>
                                         
                                         <div class="milestone-summary">
-                                            <span>Total Allocated: <strong id="milestone-allocated">₱0.00</strong></span>
+                                            <span>Allocated: <strong id="milestone-allocated">₱0.00</strong> / <span id="milestone-total-target">₱0.00</span></span>
+                                            <div id="milestone-warning" class="color-orange warning-text" style="display:none;">Allocated amounts must strictly equal the Total Project Amount.</div>
                                         </div>
 
                                         <div class="form-actions wizard-actions mt-40">
                                             <button type="button" class="btn-secondary full-width-mobile" onclick="app.prevWizardStep(3)">&larr; Back</button>
-                                            <button type="button" class="btn-primary full-width-mobile" onclick="app.nextWizardStep(3)">Next Step &rarr;</button>
+                                            <button type="button" class="btn-primary full-width-mobile" id="btn-next-step-3" onclick="app.nextWizardStep(3)">Next Step &rarr;</button>
                                         </div>
                                     </div>
 
@@ -232,16 +240,24 @@
                                         <p class="text-muted text-sm mb-24">Define rules for late payments or delayed pickups. Leave blank if not applicable.</p>
                                         <div class="form-grid">
                                             <div class="form-group">
-                                                <label>Penalty Amount (₱)</label>
-                                                <input type="number" id="projPenaltyAmt" class="form-control" min="0" step="0.01" placeholder="e.g. 500">
+                                                <label>Penalty Type</label>
+                                                <select id="projPenaltyType" class="form-control">
+                                                    <option value="fixed">Fixed Amount (₱)</option>
+                                                    <option value="percent">Percentage of Balance (%)</option>
+                                                </select>
                                             </div>
                                             <div class="form-group">
-                                                <label>When to Charge</label>
-                                                <input type="date" id="projPenaltyWhen" class="form-control">
+                                                <label>Penalty Value</label>
+                                                <input type="number" id="projPenaltyValue" class="form-control" min="0" step="0.01" placeholder="e.g. 500 or 5">
                                             </div>
                                             <div class="form-group form-span-full">
-                                                <label>Condition / Reason</label>
-                                                <input type="text" id="projPenaltyReason" class="form-control" placeholder="e.g. Late pickup or payment delay">
+                                                <label>When to Charge</label>
+                                                <select id="projPenaltyWhen" class="form-control">
+                                                    <option value="">Select timing...</option>
+                                                    <option value="1 day after due date">1 day after due date</option>
+                                                    <option value="3 days after due date">3 days after due date</option>
+                                                    <option value="1 week after due date">1 week after due date</option>
+                                                </select>
                                             </div>
                                         </div>
                                         <div class="form-actions wizard-actions mt-40">
@@ -265,7 +281,7 @@
                                                 <p id="rev-order" class="text-sm" style="line-height: 1.6;"></p>
                                             </div>
                                             <div class="review-block card bg-success-light mb-16" style="padding: 16px;">
-                                                <h4 style="margin-bottom: 8px; font-size: 14px;">Milestones</h4>
+                                                <h4 style="margin-bottom: 8px; font-size: 14px;">Milestones Summary</h4>
                                                 <p id="rev-milestones" class="text-sm" style="line-height: 1.6;"></p>
                                             </div>
                                             <div class="review-block card bg-success-light mb-24" style="padding: 16px;">
@@ -276,7 +292,6 @@
 
                                         <div class="form-actions wizard-actions mt-40">
                                             <button type="button" class="btn-secondary full-width-mobile" onclick="app.prevWizardStep(5)">&larr; Back</button>
-                                            <!-- Switched to type="button" to avoid mobile Safari HTML5 hidden field validation bugs -->
                                             <button type="button" class="btn-primary full-width-mobile bg-success" id="btn-save-project" onclick="app.handleCreateProject(event)">Create Project</button>
                                         </div>
                                     </div>
@@ -327,7 +342,7 @@
 
                                 <div class="card">
                                     <div class="d-flex justify-between align-center mb-20 flex-wrap">
-                                        <h3 class="section-title m-0">Payment Milestones</h3>
+                                        <h3 class="section-title m-0">Payment Schedule</h3>
                                     </div>
                                     <div class="timeline" id="det-milestones">
                                         <!-- Injected via JS -->

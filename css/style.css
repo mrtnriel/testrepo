@@ -187,8 +187,8 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
 /* Milestones Editor */
 .milestones-editor { display: flex; flex-direction: column; gap: 12px; }
-.milestone-row { display: flex; gap: 16px; align-items: center; background: #f8fafc; padding: 12px; border-radius: 8px; border: 1px solid var(--clr-border); flex-wrap: wrap; }
-.milestone-row input { flex: 1; min-width: 120px; }
+.milestone-row { display: flex; gap: 16px; align-items: flex-start; background: #f8fafc; padding: 12px; border-radius: 8px; border: 1px solid var(--clr-border); flex-wrap: wrap; }
+.milestone-row > div { display: flex; flex-direction: column; gap: 6px; }
 .milestone-summary { margin-top: 16px; padding-top: 16px; border-top: 1px dashed var(--clr-border); text-align: right; font-size: 14px; display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
 
 /* --- Projects List & Dashboard --- */
@@ -357,7 +357,6 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
     .form-grid { grid-template-columns: 1fr; gap: 12px; }
     .form-span-full { grid-column: auto; }
-    .milestone-row { flex-direction: column; align-items: stretch; }
     
     /* Navigation Step Buttons Stacked Hierarchy */
     .wizard-actions { flex-direction: column-reverse; gap: 12px; }
