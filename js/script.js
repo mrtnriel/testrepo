@@ -494,13 +494,18 @@ const app = {
 
         let html = '';
         
-        paymentRequested.forEach(p => { html += renderCard(p); });
-        inProgress.forEach(p => { html += renderCard(p); });
+        if (paymentRequested.length > 0) {
+            html += `<div class="project-divider"><span>Payment Requested</span></div>`;
+            paymentRequested.forEach(p => { html += renderCard(p); });
+        }
+
+        if (inProgress.length > 0) {
+            html += `<div class="project-divider"><span>In Progress</span></div>`;
+            inProgress.forEach(p => { html += renderCard(p); });
+        }
 
         if (completed.length > 0) {
-            if (paymentRequested.length > 0 || inProgress.length > 0) {
-                html += `<div class="project-divider"><span>Completed Projects</span></div>`;
-            }
+            html += `<div class="project-divider"><span>Completed Projects</span></div>`;
             completed.forEach(p => { html += renderCard(p); });
         }
 

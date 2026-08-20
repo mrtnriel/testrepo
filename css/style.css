@@ -409,6 +409,16 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     .penalty-grid { grid-template-columns: 1fr 1fr; }
     .penalty-grid .form-span-full { grid-column: 1 / -1; }
 
+    /* Mobile Project List Dividers */
+    .projects-grid { gap: 16px; }
+    .project-divider { margin: 12px 0 8px 0; }
+    .project-divider span { font-size: 11px; padding: 0 12px; }
+
+    /* Mobile Project Cards */
+    .project-card { padding: 14px; gap: 12px; }
+    .project-title { font-size: 15px; margin-bottom: 2px; }
+    .project-cust { font-size: 12px; }
+
     /* Milestone Row Grid on Mobile */
     .milestone-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; align-items: start; }
     .milestone-row .name-field { grid-column: 1 / -1; }
@@ -456,8 +466,6 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     .form-actions:not(.wizard-actions):not(.balance-actions) { flex-direction: column; }
     /* Ensure wizard-actions stays flipped for hierarchy on extremely small screens */
     .wizard-actions { flex-direction: column-reverse; gap: 12px; }
-
-    .projects-grid { grid-template-columns: 1fr; }
     
     .receipt-row { flex-direction: column; text-align: left; gap: 4px; }
     .receipt-row strong { text-align: left; }
