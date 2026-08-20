@@ -461,12 +461,16 @@ const app = {
             return;
         }
 
-        this.projects.forEach(p => {
+        const paymentRequested = this.projects.filter(p => p.status === 'PAYMENT_REQUESTED' || p.status === 'FINAL_PAYMENT_REQUESTED');
+        const inProgress = this.projects.filter(p => p.status === 'DRAFT' || p.status === 'IN_PROGRESS' || p.status === 'PARTIALLY_PAID' || p.status === 'READY');
+        const completed = this.projects.filter(p => p.status === 'COMPLETED');
+
+        const renderCard = (p) => {
             const paidAmt = p.milestones.filter(m => m.paid).reduce((s, m) => s + m.amount, 0);
             const pct = p.total > 0 ? Math.round((paidAmt / p.total) * 100) : 0;
             const statusObj = this.STATUS[p.status];
 
-            grid.innerHTML += `
+            return `
                 <div class="card project-card" onclick="app.openProjectDetail('${p.id}')">
                     <div class="project-header">
                         <div style="min-width: 0;">
@@ -486,7 +490,21 @@ const app = {
                     </div>
                 </div>
             `;
-        });
+        };
+
+        let html = '';
+        
+        paymentRequested.forEach(p => { html += renderCard(p); });
+        inProgress.forEach(p => { html += renderCard(p); });
+
+        if (completed.length > 0) {
+            if (paymentRequested.length > 0 || inProgress.length > 0) {
+                html += `<div class="project-divider"><span>Completed Projects</span></div>`;
+            }
+            completed.forEach(p => { html += renderCard(p); });
+        }
+
+        grid.innerHTML = html;
     },
 
     openProjectDetail(id) {
